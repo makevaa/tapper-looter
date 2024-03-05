@@ -14,9 +14,14 @@ const player = {
     invSlots: 30,
     inv:[],
     gold:0,
+    kills:0,
 
-    baseDamage: 40,
-    damage: 40,
+    damage: {
+        base: 10,
+        bonus: 0,
+        typeBonus:0,
+    },
+
 
     crit: {
         chance: 0,
@@ -51,27 +56,26 @@ const itemQuality = [
 
 
 class Item {
-    constructor(name, type, src, isWeapon) {
-        this.name = name;
+    constructor(type, src, isWeapon) {
+   
         this.imageSrc = src;
         this.looted = false;
 
         this.type = type;
         this.isWeapon = isWeapon;
-        this.sellValue = 10;
+ 
 
-        // Rarity: grey, white, green, blue, purple, orange, 
+        // Rarity: grey, white, green, blue, purple, orange
         this.qualityLevel = this.createQualityLevel();
+        this.name = this.createName();
+        this.sellValue = this.setSellValue();
         this.effects = [];
-        this.createEffect();
+        this.createEffects();
     }
 
-    // const nameKeywords = ['normal', 'normal', 'magic', 'rare', 'legendary', 'mythic'];
-    // ranNum(0, itemQuality.length-1);
-    createQualityLevel() {
-        // 0-5
-        let lvl = 0;
 
+    createQualityLevel() {
+        let lvl = 0;
         if (chance(2)) {
             lvl = 5;
         } else if (chance(5)) {
@@ -82,30 +86,52 @@ class Item {
             lvl = 2;
         } else if (chance(30)) {
             lvl = 1;
-        }
-                
+        }      
         return lvl;
     }
 
-    createEffect() {
+    createName() {
+        const nameKeywords = ['normal', 'normal', 'magic', 'rare', 'legendary', 'mythic'];
+        const name = rpgItemGen.createItem(this.type, nameKeywords[this.qualityLevel]);
+
+        return name;
+    }
+
+    createEffects() {
+        
+        const weaponTypes = [ 'axe', 'bow', 'hammer', 'mace', 'spear', 'staff', 'sword'];
+
         const type = this.type;
-
-
+        //let eff = -1;
 
         if (this.isWeapon) {
 
             let min = 1;
             if (this.qualityLevel > 1) { min += 10;}
             let max = (this.qualityLevel+1)*10 ;
-            const effect = new DamageBonus(ranNum(min, max));
-            this.effects.push(effect);
+            const eff = new DamageBonus(ranNum(min, max));
+            this.effects.push(eff);
+
+
+            if (chance(10) && this.qualityLevel > 3) {
+                // crit chance or crit damage
+            }
 
         } else if (type === 'amulet') {
 
+          
         } else if (type === 'artifact') {
 
         } else if (type === 'potion') {
             
+        }
+
+        if (chance(50 + this.qualityLevel*3) && !this.isWeapon) {
+            const min = 1;
+            const max = (this.qualityLevel+1)*4 ;
+            const forType = selectFrom(weaponTypes);
+            const eff = new TypeDamageBonus(ranNum(min, max), forType);
+            this.effects.push(eff);
         }
 
         if (chance(50) && this.qualityLevel > 2) {
@@ -118,7 +144,14 @@ class Item {
             //log(this.sellValue)
         }
         
-    }   
+    }  
+
+    setSellValue() {
+        let min = this.qualityLevel * 5 + 1;
+        let max = min + min*2;
+        const value = ranNum(min, max);
+        return value;
+    }
 }
 
 
@@ -144,6 +177,25 @@ class IncreasedValue extends Effect {
         super('IncreasedValue');
         this.value = percent;
         this.text = `Increased value: +${percent}%`;
+
+    }
+}
+
+// Damage bonus if using specific weapon type
+class TypeDamageBonus extends Effect {
+    constructor(dmg, type) {
+        super('TypeDamageBonus');
+        this.value = dmg;
+        this.type = type;
+        this.text = `${toTitleCase(type)} damage +${dmg}`;
+    }
+}
+
+class CritChance extends Effect {
+    constructor(dmg) {
+        super('CritChance');
+        this.value = dmg;
+        this.text = `Damage +${dmg}`;
 
     }
 }
@@ -221,7 +273,6 @@ const goldAnim = document.querySelector('#gold-container > .gold-anim-container 
 
 
 const createLootItem = () => {
-    //const item = new Item('not set', 'img/item/axe.png');
     const types = ['amulet', 'artifact', 'axe', 'bow', 'hammer', 'mace', 'spear', 'staff', 'sword'];
     //removed 'potion' for now
 
@@ -234,16 +285,16 @@ const createLootItem = () => {
         isWeapon = true;
     }
 
-    const qualityLevel = ranNum(0,5) // 6 quality levels
+    //const qualityLevel = ranNum(0, 5); // 6 quality levels
     // "Normal" is twice correctly, make simple names for 2 lowest tiers
-    const nameKeywords = ['normal', 'normal', 'magic', 'rare', 'legendary', 'mythic'];
-    const name = rpgItemGen.createItem(type, nameKeywords[qualityLevel]);
+    // The name generator uses different kind of tier naming
+
 
 
     const imageSrc = `img/item/${type}${ranNum(1, itemImageAmounts[type])}.png`
     //log(imageSrc)
 
-    const item = new Item(name, type, imageSrc, isWeapon)
+    const item = new Item(type, imageSrc, isWeapon)
     return item;
 }
 
@@ -266,6 +317,11 @@ const createEnemy = () => {
     enemyImageElem.style.backgroundImage = `url('${imageSrc}')`;
 
     enemy.hp.max = settings.enemyMaxHp;
+
+    // Create boss enemy
+    if (chance(5) && player.kills > 50) {
+        enemy.hp.max = settings.enemyMaxHp*10
+    }
     enemy.hp.current = enemy.hp.max;
 
     enemyHpCurrent.innerText = enemy.hp.current;
@@ -388,7 +444,7 @@ const takeLoot = () => {
 
 
 
-    let animDuration = 300; //ms
+    let animDuration = 200; //ms
 
 
     //transition: all 0.5s;
@@ -434,7 +490,9 @@ const attackEnemy = () => {
      // Return early to avoid possibly triggering death multiple times.
     if (enemy.dead) return false;
 
-    let dmg = player.damage;
+    let dmg = player.damage.base;
+    dmg += player.damage.bonus;
+    dmg += player.damage.typeBonus;
 
     if (chance(player.crit.chance)) {
         dmg *= player.crit.multiplier;
@@ -453,6 +511,7 @@ const attackEnemy = () => {
         //log('Enemy is dead');
         playAnim(animData.explosion1, false);
         enemy.dead = true;
+        player.kills++;
 
         // Hide enemy elem
         enemyContainer.classList.add('hidden');
@@ -476,10 +535,12 @@ const attackEnemy = () => {
         attackAnim = animData.atk2;
         playAnim(attackAnim, true);
 
+        
         setTimeout(() => {
             enemyImageElem.classList.remove('damaged');
             enemyHpBarContainer.classList.remove('damaged');
-        }, 100);
+        }, 200);
+        
     }
 
 }
@@ -592,7 +653,7 @@ const setListeners = () => {
     for (let i=0; i<equipmentSlotNames.length; i++) {
         const slotImage = document.querySelector(`#equipment-container > .slot.${equipmentSlotNames[i]} .image-container `);
 
-        log(slotImage);
+        //log(slotImage);
 
         slotImage.addEventListener('click', e => {
             unequipItem(equipmentSlotNames[i]);
@@ -741,10 +802,9 @@ const playAnim = (anim, offset=false) => {
         framesPerRow: anim.framesPerRow,
         frame: 0,
         prevTime: 0,
+        image: anim.image,
     }
-    const img = new Image();
-    img.src = anim.imageSrc;
-    animObj.image = img;
+
 
     animate(animObj);
 }
@@ -754,15 +814,18 @@ const animate = anim => {
     const canvas = anim.canvas;
     const ctx = anim.ctx
 
-    let column;
+    let column = 0;
 
     const animationLoop = now => {
         const elapsed = now - anim.prevTime;
+     
 
         if (anim.frame >= anim.frames) {
             // Animation has ended
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            canvas.remove();
+            setTimeout(() => {
+                canvas.remove();
+            }, 300);
             return true;
         }
 
@@ -772,7 +835,7 @@ const animate = anim => {
             //ctx.drawImage  (image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
             const row = Math.floor(anim.frame / anim.framesPerRow);
 
-            if ( anim.frame % anim.framesPerRow === 0) {
+            if (anim.rows > 1 && anim.frame % anim.framesPerRow === 0) {
                 column = 0;
             }
             //log(column)
@@ -868,13 +931,15 @@ const createEquipmentSlots = () => {
 
         const image = document.createElement('img');
         image.classList.add('image');
-        image.setAttribute('src', 'img/transp.png');
+        //image.setAttribute('src', 'img/transp.png');
+        image.setAttribute('src', `img/empty_slot_${slotName}.png`);
         image.setAttribute('alt', 'equipment slot');
 
         imageCon.append(image);
+        imageWrapper.append(slotLabel);
         imageWrapper.append(imageCon);
 
-        imageWrapper.append(slotLabel);
+    
 
         mid.append(imageWrapper);
 
@@ -986,8 +1051,9 @@ const sellItem = i => {
 
 const sellAll = () => {
     //log('trying to sell all items')
-    for(let i=player.inv.length-1; i>=0; i--) {
-
+    invGrid.scrollTop = 0;
+    for (let i=player.inv.length-1; i>=0; i--) {
+       
         let time = Math.abs(i - player.inv.length) * 1;
    
         setTimeout(() => {
@@ -1120,7 +1186,7 @@ const setEquippedItems = () => {
     for (let i=0; i<slotNames.length; i++) {
 
         const slot = slotCon.querySelector(`.slot.${slotNames[i]}`);
-        clearEquipmentSlot(slot);
+        clearEquipmentSlot(slot, slotNames[i]);
         const item = player.equipment[slotNames[i]];
 
 
@@ -1160,10 +1226,11 @@ const setEquippedItems = () => {
         } 
      
     }
+    setPlayerStats();
 }
 
 
-const clearEquipmentSlot = slot => {
+const clearEquipmentSlot = (slot, slotName) => {
     slot.setAttribute('data-empty', true);
     const slotImageCon = slot.querySelector('.image-container');
     const slotItemName = slot.querySelector('.name');
@@ -1172,21 +1239,90 @@ const clearEquipmentSlot = slot => {
     const defaultBoxShadow = '0px 0px 0px 1px rgb(100, 100, 100), 0px 0px 0px 4px rgba(0, 0, 0, 1), inset 0px 0px 5px 5px rgba(0,0,0,0.5), /* vignette */ 0px 0px';
     slotImageCon.style.boxShadow = defaultBoxShadow;
     const slotImage = slotImageCon.querySelector('img.image');
-    slotImage.setAttribute("src", './img/transp.png');
+    //slotImage.setAttribute("src", './img/transp.png');
+    slotImage.setAttribute('src', `img/empty_slot_${slotName}.png`);
+    slotImage.style.filter = 'none';
 
     slotItemName.innerText = '';
     slotItemEffects.innerHTML = '';
 }
 
 
+
+
 // Set player stats after equipping/unequipping items
 const setPlayerStats = () => {
+    let bonusDamage = 0;
+    let typeBonusDamage = 0;
+
+    const slotNames = Object.getOwnPropertyNames(player.equipment);
+
+    for (const name of slotNames) {
+        const item = player.equipment[name];
+
+        if (item instanceof Item) {
+            // slot has an item equipped
+
+
+            for (const eff of item.effects) {
+
+                if (eff instanceof DamageBonus) {
+                    bonusDamage += eff.value;
+                }
+
+                if (eff instanceof TypeDamageBonus) {
+                    if (eff.type === player.equipment.weapon.type) {
+                        typeBonusDamage += eff.value;
+                    }
+               
+                }
+
+            }
+                
+         
+
+
+
+            
+        }
+    
+    }
+
+    player.damage.bonus = bonusDamage;
+    player.damage.typeBonus = typeBonusDamage;
+
+
+
+    const damageElem = document.querySelector('#player-stats-container .damage');
+    const critChanceElem = document.querySelector('#player-stats-container .crit-chance');
+    const critDamageElem = document.querySelector('#player-stats-container .crit-damage');
+
+    const totalDamage = player.damage.base+player.damage.bonus+player.damage.typeBonus;
+    damageElem.innerText = totalDamage;
+
+
+
+    critChanceElem.innerText = player.crit.chance;
+    critDamageElem.innerText = `${player.crit.multiplier*100}%` ;
+
+}
+
+const setAnimImages = () => {
+    const animNames = Object.getOwnPropertyNames(animData);
+
+    for (const animName of animNames) {
+        const anim = animData[animName];
+        const img = new Image();
+        img.src = anim.imageSrc;
+        anim.image = img;
+    }
+
 
 }
 
 
-
 preloadImages(imagesToPreload).then(function(imgs) {
+    setAnimImages();
     createInvSlots();
     createEquipmentSlots();
     createEnemy();
@@ -1194,7 +1330,7 @@ preloadImages(imagesToPreload).then(function(imgs) {
 
     setListeners();
 
-    showTabView(2);
+    showTabView(0);
 
     createTestItems(20);  //debug
     //setInvItems()

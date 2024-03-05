@@ -129,10 +129,12 @@ body{
 #enemy-image-container {
     xborder:1px solid orange;
     xtext-align: center;
-    width:100%;
+    xwidth:100%;
+
     height:50%;
 
     aspect-ratio: 1/1;
+    width:auto;
 
     display:flex;
     justify-content: center;
@@ -184,7 +186,7 @@ x#enemy-container:active  #enemy-image{
     border-radius:5px;
     position:relative;
     overflow:hidden;
-    width: 100%;
+    width: 70%;
     height: 2em;
     margin-top:10px;
     background-color:rgba(0, 0, 0, 0.5);

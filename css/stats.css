@@ -17,7 +17,8 @@
     xborder:1px solid red;
     width:100%;
     height:75%;
-    padding:10px 10px 0px 10px;
+    xpadding:0px 10px 0px 10px;
+    padding-top:20px;
 
     display:flex;
     flex-direction:column;
@@ -28,19 +29,24 @@
 }
 
 #equipment-container > .slot {
-    border: 2px solid rgb(0, 0, 0);
-    border-radius: 5px;
-    xheight:100%;
-    width:95%;
-    xflex:1;
+    xborder: 2px solid rgb(0, 0, 0);
+    xborder-radius: 5px;
+    border-bottom:2px solid black;
     background-color:rgba(0,0,0,0.3);
-    margin-bottom: 5px;
-    padding: 0px 0px 0px 15px;
-    box-shadow:  rgba(0, 0, 0, 0.7) 3px 3px 5px 0px;
+    xbox-shadow:  rgba(0, 0, 0, 0.7) 3px 3px 5px 0px;
+
+    xheight:100%;
+    width:100%;
+    xflex:1;
+
+    xmargin-bottom: 5px;
+    padding: 0px 0px 10px 15px;
+
 
     display:flex;
-    justify-content: left;
-    align-items: center;
+    xjustify-content: left;
+    align-items: start;
+    justify-items:start;
     flex-direction:column;
     
 }
@@ -49,8 +55,8 @@
     xborder:1px solid grey;
     width:100%;
     height:2em;
-    padding-left:10px;
-    padding: 10px;
+    xpadding-left:10px;
+    padding: 0px 10px 0px 30px;
     display:flex;
     align-items:center;
     justify-content: space-between;
@@ -65,11 +71,12 @@
     xfont-family:consolas,monospace;
     xwidth:100%;
     xheight:2em;
+    padding:0px;
 }
 
 #equipment-container > .slot > .mid  {
     xborder:1px solid orange;
-    height:70%;
+    xheight:70%;
     width:100%;
     
     xpointer-events: none;
@@ -84,17 +91,22 @@
 #equipment-container > .slot > .mid > .image-wrapper {
     xborder:1px solid grey;
     xheight:100%;
-    margin-top:5px;
-    width:4em;
+    xmargin-top:5px;
+    width:25%;
+    xaspect-ratio:1/1;
+    xoverflow:hidden;
     xheight:4em;
     xheight:100%;
+    xwidth:100%;
     xflex:1em;
-    aspect-ratio:1/1;
+ 
     xpointer-events: none;
+    xposition:relative;
+
     display:flex;
-    flex-direction:column;
+    flex-direction:row;
     justify-content: center;
-    align-items: center;
+    align-items: start;
 }
 
 #equipment-container > .slot > .mid >  .image-wrapper > .label {
@@ -102,12 +114,15 @@
     color:grey;
     font-family:consolas,monospace;
     xwidth: 3em;
-    font-size:0.8em;
+    font-size:1em;
     text-align:center;
-    padding:3px 0px 0px 0px;
+    padding:5px 5px 5px 5px;
+    xpadding:5px;
+    letter-spacing: -3px;
 
-    writing-mode: vertical-lr;
-text-orientation: mixed;
+    writing-mode: vertical-rl;
+    text-orientation: upright;
+    xtransform: rotate(-180deg);
 
     xwidth:100%;
     xheight:2em;
@@ -120,7 +135,7 @@ text-orientation: mixed;
     xwidth:100%;
     xheight:100%;
     width:80%;
-    height:80%;
+    xheight:80%;
     aspect-ratio: 1/1;
  
 
@@ -160,7 +175,7 @@ text-orientation: mixed;
     xborder:1px solid red;
     border-radius:5px;
     width:90%;
-    height:20%;
+    height:25%;
     padding:10px;
     font-family:consolas,monospace;
     color:grey;
