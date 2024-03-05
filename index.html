@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang='en'>
+  <head>
+    <meta charset='UTF-8' />
+
+    <link media='screen' href='css/style.css' type='text/css' rel='stylesheet' /> 			
+    <link media='screen' href='css/bottom-bar.css' type='text/css' rel='stylesheet' /> 	
+    <link media='screen' href='css/loot-item.css' type='text/css' rel='stylesheet' /> 	
+    <link media='screen' href='css/anim.css' type='text/css' rel='stylesheet' /> 			
+
+    <link media='screen' href='css/inv-view.css' type='text/css' rel='stylesheet' /> 			
+    <link media='screen' href='css/stats.css' type='text/css' rel='stylesheet' />
+
+    <link media='screen' href='css/debug.css' type='text/css' rel='stylesheet' /> 			
+
+    <meta name="viewport" content="initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, width=device-width, height=device-height, target-densitydpi=device-dpi">
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <meta name="theme-color" content="#212121">
+		<meta name='msapplication-navbutton-color' content='#212121'><!-- Windows Phone -->		
+		<meta name='apple-mobile-web-app-status-bar-style' content='#212121'><!-- iOS Safari -->
+
+    <link rel='shortcut icon' href='favicon.ico'>
+    <title>TapperLooter</title>
+  </head>
+
+  <body>
+    
+
+    <div id='content'>
+
+      <div id='border-layer'></div>
+
+      <div id='view-container'>
+
+
+        <div class='view combat hidden'>
+
+         <div id='enemy-container'>
+
+          <div id='enemy-name-container'>
+            <div id='enemy-name'> </div>
+          </div>
+          <div id='enemy-image-container'>
+            <div id='enemy-image' src='img/creature.jpg'> </div>
+          </div>
+
+          <div id='enemy-hp-bar-container'>
+            
+            <div class='border-layer'></div>
+            <div class='bar bg'></div>
+            <div class='bar main'></div>
+
+            <div class='hp-container'>
+              <div class='current'>000</div>
+              <span>/</span>
+              <div class='max'>000</div>
+            </div>
+          </div>
+
+         </div>
+
+
+         <div id='loot-container' class='hidden'>
+
+          <div id='loot-name-container'>
+            <div id='loot-name'></div>
+          </div>
+       
+          <div class='loot-item'>
+
+              <div class='outer-wrap'>
+                <div class='inner-wrap pixelated'>
+                  <!--<div class='front image' style='background-image: url('img/item/axe.png'); filter: drop-shadow(black 0px 0px 0px);'></div>
+                  <div class='back image' style='background-image: url('img/item/axe.png'); filter: drop-shadow(black 0px 0px 0px);'></div>
+                  -->
+                  <div class='image'></div>
+                  <div class='image'></div>
+
+                  <div class='item-normal-glow-container'>
+                    <div class='item-normal-glow' style='box-shadow: rgba(153, 51, 255, 0.8) 0px 0px 50px 20px;'></div>	
+                  </div>				
+                </div>
+              </div>
+              <div class='item-bottom-shadow-container'>
+                <div class='item-bottom-shadow'></div>
+              </div>					
+        
+          </div>
+
+         </div>
+         
+<!--
+          <div class='debug'>
+            <div class='create-monster'>createEnemy()</div>
+          </div>
+-->
+        </div>
+
+
+        <div class='view inv hidden'>
+
+          <div id='gold-container'>
+
+          
+
+            <div class='gold-amount-container'>
+              <div class='gold-amount'>0</div>
+            </div>
+
+            <div class='image-container'>
+              <img class='image' src='img/gold_coins.png'>
+            </div>
+
+            <div class='gold-anim-container'>
+              <div class='gold-anim'></div>
+            </div>
+
+          </div>
+          
+          <div id='item-viewer-container'>
+            <div id='item-viewer'>
+
+              <div class='name-container'>
+                <div class='name'></div>
+
+                <div class='type-container'>
+                  <div class='quality-title'></div>
+                  <div class='type'></div>
+
+                  <div class='value-container hidden'>
+              
+
+
+                    <div class='value'>5</div>
+                    
+                    <div class='image-container'>
+                      <img class='image' src='img/gold_coins.png'>
+                    </div>
+                  </div>
+                </div>
+
+                <div class='effects-container'></div>
+              </div>
+
+              <div class='image-container'>
+                <div class='viewer-item'>
+
+                  <div class='outer-wrap'>
+                    <div class='inner-wrap'>
+                      <!--<div class='front image' style='background-image: url('img/item/axe.png'); filter: drop-shadow(black 0px 0px 0px);'></div>
+                      <div class='back image' style='background-image: url('img/item/axe.png'); filter: drop-shadow(black 0px 0px 0px);'></div>
+                      -->
+                      <div class='image front pixelated'></div>
+                      <div class='image back pixelated'></div>
+    
+                      <div class='item-normal-glow-container'>
+                        <div class='item-normal-glow' ></div>	
+                      </div>				
+                    </div>
+                  </div>
+                  
+                  <div class='item-bottom-shadow-container hidden'>
+                    <div class='item-bottom-shadow'></div>
+                  </div>	
+                  		
+            
+              </div>
+              </div>
+
+
+            </div>
+
+          </div>
+       
+
+          <div id='inv-container'>
+            <div id='inv-grid'></div>
+          </div>
+
+          <div id='inv-bar'>
+
+            <div id='sell-all' class='button'>Sell all</div>
+            <div id='sell-selected' class='button'>Sell selected</div>
+            <div id='equip-selected' class='button'>Equip</div>
+          </div>
+
+
+        </div>
+
+
+
+        <div class='view hidden'>
+          
+          <div id='equipment-container'></div>
+
+          <div id='player-stats-container'>
+            
+            <div class='row'>
+              <div class='label'>Damage</div>
+              <div class='value'>10</div>
+            </div>
+
+            <div class='row'>
+              <div class='label'>Crit chance</div>
+              <div class='value'>0</div>
+            </div>
+
+            <div class='row'>
+              <div class='label'>Crit damage</div>
+              <div class='value'>150%</div>
+            </div>
+          </div>
+        
+        </div>
+      </div>
+
+      <div id='bottom-bar'>
+        <div class='tab selected'>
+          <img class='joku' src='img/swords_crossed.png' />
+        </div>
+
+        <div class='tab inv'>
+          <img class='joku' src='img/chest.png' />
+        </div>
+
+        <div class='tab'>
+          <img class='joku' src='img/helm.png' />
+        </div>
+
+      </div>
+
+
+    </div>
+
+
+
+    <!-- type='module' -->
+    <script src='js/hero-gen.js'></script>
+    <script src='js/rpg-item-gen-2.js'></script>
+
+    <script src='js/preload.js'></script>
+
+    <script src='js/anims.js'></script>
+    <script src='js/settings.js'></script>
+    <script src='js/util.js'></script>
+    <script src='js/main.js'></script>
+
+  </body>
+
+</html>

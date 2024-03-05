@@ -1,0 +1,66 @@
+
+
+#bottom-bar {
+    xborder:1px solid red;
+    xmax-height:50px;
+    height:15%;
+    xheight:50px;
+    xheight:15em;
+    xz-index:1;
+
+    display:flex;
+    xjustify-content: center;
+    xalign-items: center;
+    xflex-grow: 1;
+    flex-direction:row;
+    xflex-basis:100%;
+    box-shadow: 0px -5px 5px 0px rgba(0,0,0, 0.5);
+}
+
+#bottom-bar > .tab {
+    xborder:1px solid red;
+    text-align: center;
+
+    xflex-basis:100%;
+    width:100%;
+    height:100%;
+
+    display:flex;
+    justify-content: center;
+    align-items: center;
+
+    background-color:#364353;
+
+    border-right: 1px solid rgba(0, 0, 0, 0.5);
+}
+
+
+
+#bottom-bar > .tab:active {
+    xbackground-color:#1d242c;
+}
+
+#bottom-bar :last-child {
+    border-right:none;
+}
+
+#bottom-bar > .tab.selected {
+    background-color:#1e252e;
+    xfilter:brightness(0.7);
+}
+
+#bottom-bar > .tab > img {
+    xborder:1px solid grey;
+    filter: drop-shadow(0px 0px 2px rgba(255, 255, 255, 0.9));
+    aspect-ratio:1/1;
+    height:50%;
+    ximage-rendering: pixelated;
+    transition: all 0.1s;
+    border-radius:5px;
+}
+
+#bottom-bar > .tab.inv > img.full {
+    transform: translateY(-10px);
+    filter:none;
+    background-color:rgb(149, 0, 0);
+} 

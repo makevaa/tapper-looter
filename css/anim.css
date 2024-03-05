@@ -1,0 +1,31 @@
+/*
+#anim-container {
+    border:1px solid grey;
+    position:absolute;
+    width:100vw;
+    height:100%;
+    
+    pointer-events: none;
+
+    display:flex;
+
+    align-items: center;
+    justify-content: center;
+
+
+}
+
+#anim-container > canvas {
+    border:1px solid green;
+}
+*/
+
+.anim-canvas {
+    xborder:1px solid grey;
+    position:absolute;
+    pointer-events: none;
+    z-index:1;
+}
+
+
+

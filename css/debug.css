@@ -1,0 +1,22 @@
+.debug {
+    xborder:1px solid grey;
+    position:absolute;
+    height:5%;
+    xpadding:10px;
+    background-color: rgba(0, 0, 0, 0.5);
+    color:grey;
+
+}
+
+.debug > div {
+    border:1px solid grey;
+    display:inline-block;
+    padding:5px;
+    height:100%;
+    background-color:rgb(46, 46, 67);
+    
+}
+
+.debug > div:active {
+    filter:brightness(0.8);
+}
