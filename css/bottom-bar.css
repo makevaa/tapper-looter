@@ -14,7 +14,7 @@
     xflex-grow: 1;
     flex-direction:row;
     xflex-basis:100%;
-    box-shadow: 0px -5px 5px 0px rgba(0,0,0, 0.5);
+    xbox-shadow: 0px -5px 5px 0px rgba(0,0,0, 0.5);
 }
 
 #bottom-bar > .tab {
@@ -29,34 +29,62 @@
     justify-content: center;
     align-items: center;
 
-    background-color:#364353;
+    xbackground-color:#364353;
+    background-color:transparent;
 
-    border-right: 1px solid rgba(0, 0, 0, 0.5);
+    xborder-right: 1px solid rgba(0, 0, 0, 0.5);
+
+
+    /* testing button bg for bottom tabs */
+    display:flex;
+	justify-content: center;
+	align-items: center;
+
+    ximage-rendering:pixelated;
+    background-image: url('../img/button_fat.png');
+    
+  
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 100% 90%;
+
+    font-size:2em;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+	text-transform: uppercase;
+
+    color:#ffffff;
+    text-shadow: 0px 0px 10px orange, 0px 0px 5px rgb(160, 160, 160);
+    
+    transition: all 0.07s;
 }
 
 
-
-#bottom-bar > .tab:active {
-    xbackground-color:#1d242c;
-}
 
 #bottom-bar :last-child {
     border-right:none;
 }
 
 #bottom-bar > .tab.selected {
-    background-color:#1e252e;
+    xbackground-color:#1e252e;
     xfilter:brightness(0.7);
+    background-image: url('../img/button_fat_dark.png');
 }
 
 #bottom-bar > .tab > img {
     xborder:1px solid grey;
-    filter: drop-shadow(0px 0px 2px rgba(255, 255, 255, 0.9));
+    xfilter: drop-shadow(0px 0px 2px rgba(255, 255, 255, 0.9));
+    filter: drop-shadow(0px 0px 3px rgba(0, 0, 0, 1)) 
+            drop-shadow(0px 0px 5px rgba(0, 0, 0, 1)) ;
     aspect-ratio:1/1;
     height:50%;
     ximage-rendering: pixelated;
     transition: all 0.1s;
     border-radius:5px;
+}
+
+#bottom-bar > .tab.selected > img {
+    filter: drop-shadow(0px 0px 3px rgba(255, 255, 255, 1));
+
 }
 
 #bottom-bar > .tab.inv > img.full {

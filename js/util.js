@@ -39,3 +39,64 @@ function toTitleCase(str) {
   }
 
 
+const hideModal = () => {
+    modal.style.opacity = 0;
+
+    const windows = document.querySelectorAll('#modal-container > .modal-window');
+    
+    setTimeout(() => {
+        modal.style.visibility = 'hidden';
+
+        for (const win of windows) {
+            win.style.visibility = 'hidden';
+            //win.style.opacity = 0;
+        }
+      }, 200);
+  
+}
+
+const showModal = targetName => {
+    const target = document.querySelector(`#modal-container > .modal-window.${targetName}`);
+    
+    target.style.visibility = 'visible';
+    modal.style.visibility = 'visible';
+    modal.style.opacity = 1;
+    //target.style.opacity = 1;
+}
+
+
+
+
+const showMenu = (show=true) => {
+    const menu = document.getElementById('menu-container');
+    let visi, opa;
+
+    if (show) {
+        // Show menu
+        visi = 'visible';
+		opa = 1;
+        //menu.classList.remove('hidden');
+
+    } else {
+        // Hide menu
+        visi = 'hidden';
+		opa = 0;
+        //menu.classList.add('hidden');
+    }
+
+	menu.style.visibility = visi;
+	menu.style.opacity = opa;
+
+	/*
+	if (show) {
+		menu.style.visibility = visi;
+		menu.style.opacity = opa;
+	} else {
+		menu.style.opacity = opa;
+		setTimeout(() => {
+			menu.style.visibility = visi;
+		}, 200);
+	}
+	*/
+
+}

@@ -4,9 +4,14 @@ const imagesToPreload = [
     'img/chest.png',
     'img/chest_open.png',
     'img/helm.png',
+    'img/button.png',
+    'img/button_dark.png',
+    'img/button_fat.png',
+    'img/button_fat_dark.png',
     'img/swords_crossed.png',
     'img/anim/explosion1.png',
     'img/anim/hit_ring.png',
+
 
 
 

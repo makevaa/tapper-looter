@@ -1,47 +1,56 @@
 // main.js
 
-const enemy = {
-    //name:'Enemy Name JS',
+let enemy = {
+    name:-1,
     dead: false,
     hp: {
         max: settings.enemyMaxHp,
         current:settings.enemyMaxHp,
     },
     lootItem:{},
+    image:-1,
 }
 
-const player = {
-    invSlots: 30,
-    inv:[],
-    gold:0,
-    kills:0,
+class Player {
+    constructor() {
+        this.invSlots = 30,
+        this.inv = [],
+        this.gold = 0,
+        this.kills = 0,
+        this.tab = 0,
+    
+        this.damage = {
+            base: 10,
+            bonus: 0,
+            typeBonus:0,
+        },
+    
+        this.crit = {
+            chance: 0,
+            multiplier: 1.5,
+            baseMultiplier: 1.5
+        },
+    
+        this.equipment =  {
+            weapon: -1,
+            amulet: -1,
+            artifact: -1
+        }
+    
 
-    damage: {
-        base: 10,
-        bonus: 0,
-        typeBonus:0,
-    },
+    }
 
 
-    crit: {
-        chance: 0,
-        multiplier: 1.5,
-        baseMultiplier: 1.5
-    },
-
-
-    equipment: {
-        weapon: -1,
-        amulet: -1,
-        artifact: -1
-    },
-
-    addGold: amount => {
-        player.gold += amount;
-        playerGoldElem.innerText = player.gold;
-        runGoldAnim(amount, true);
-    },
 }
+
+let player = new Player();
+
+const addGold = amount => {
+    player.gold += amount;
+    playerGoldElem.innerText = player.gold;
+    runGoldAnim(amount, true);
+}
+
 
 const itemQuality = [
     // gray, white, green, blue, purple, orange
@@ -56,101 +65,15 @@ const itemQuality = [
 
 
 class Item {
-    constructor(type, src, isWeapon) {
-   
-        this.imageSrc = src;
-        this.looted = false;
-
+    constructor(name, type, isWeapon, imageSrc, qLevel, sellValue, effects) {
+        this.name = name;
         this.type = type;
         this.isWeapon = isWeapon;
- 
-
-        // Rarity: grey, white, green, blue, purple, orange
-        this.qualityLevel = this.createQualityLevel();
-        this.name = this.createName();
-        this.sellValue = this.setSellValue();
-        this.effects = [];
-        this.createEffects();
-    }
-
-
-    createQualityLevel() {
-        let lvl = 0;
-        if (chance(2)) {
-            lvl = 5;
-        } else if (chance(5)) {
-            lvl = 4;
-        } else if (chance(10)) {
-            lvl = 3;
-        } else if (chance(20)) {
-            lvl = 2;
-        } else if (chance(30)) {
-            lvl = 1;
-        }      
-        return lvl;
-    }
-
-    createName() {
-        const nameKeywords = ['normal', 'normal', 'magic', 'rare', 'legendary', 'mythic'];
-        const name = rpgItemGen.createItem(this.type, nameKeywords[this.qualityLevel]);
-
-        return name;
-    }
-
-    createEffects() {
-        
-        const weaponTypes = [ 'axe', 'bow', 'hammer', 'mace', 'spear', 'staff', 'sword'];
-
-        const type = this.type;
-        //let eff = -1;
-
-        if (this.isWeapon) {
-
-            let min = 1;
-            if (this.qualityLevel > 1) { min += 10;}
-            let max = (this.qualityLevel+1)*10 ;
-            const eff = new DamageBonus(ranNum(min, max));
-            this.effects.push(eff);
-
-
-            if (chance(10) && this.qualityLevel > 3) {
-                // crit chance or crit damage
-            }
-
-        } else if (type === 'amulet') {
-
-          
-        } else if (type === 'artifact') {
-
-        } else if (type === 'potion') {
-            
-        }
-
-        if (chance(50 + this.qualityLevel*3) && !this.isWeapon) {
-            const min = 1;
-            const max = (this.qualityLevel+1)*4 ;
-            const forType = selectFrom(weaponTypes);
-            const eff = new TypeDamageBonus(ranNum(min, max), forType);
-            this.effects.push(eff);
-        }
-
-        if (chance(50) && this.qualityLevel > 2) {
-            let min = 5;
-            let max = 50;
-            let percent = ranNum(min, max);
-            const effect = new IncreasedValue(percent);
-            this.effects.push(effect);
-            this.sellValue = Math.floor( this.sellValue * (1+(percent/100)) );
-            //log(this.sellValue)
-        }
-        
-    }  
-
-    setSellValue() {
-        let min = this.qualityLevel * 5 + 1;
-        let max = min + min*2;
-        const value = ranNum(min, max);
-        return value;
+        this.imageSrc = imageSrc;
+        this.qualityLevel = qLevel;
+        this.sellValue = sellValue;
+        this.effects = effects;
+        this.looted = false;
     }
 }
 
@@ -192,10 +115,10 @@ class TypeDamageBonus extends Effect {
 }
 
 class CritChance extends Effect {
-    constructor(dmg) {
+    constructor(chance) {
         super('CritChance');
-        this.value = dmg;
-        this.text = `Damage +${dmg}`;
+        this.value = chance;
+        this.text = `Crit chance +${chance}%`;
 
     }
 }
@@ -268,53 +191,120 @@ const playerGoldElem = document.querySelector('#gold-container > .gold-amount-co
 const goldAnimContainer = document.querySelector('#gold-container > .gold-anim-container');
 const goldAnim = document.querySelector('#gold-container > .gold-anim-container > .gold-anim');
 
+const modal = document.getElementById('modal-container');
 
 
+const createItemEffects = (type, isWeapon, qLevel) => {
+    const weaponTypes = [ 'axe', 'bow', 'hammer', 'mace', 'spear', 'staff', 'sword'];
+
+    let effects = []
+
+    if (isWeapon) {
+        let min = 1;
+        if (qLevel > 1) { min += 10;}
+        let max = (qLevel+1)*10 ;
+        const eff = new DamageBonus(ranNum(min, max));
+        effects.push(eff);
 
 
-const createLootItem = () => {
-    const types = ['amulet', 'artifact', 'axe', 'bow', 'hammer', 'mace', 'spear', 'staff', 'sword'];
-    //removed 'potion' for now
+        if (chance(10) && qLevel > 3) {
+            // crit chance or crit damage
+        }
 
-    const type = selectFrom(types);
+    } else if (type === 'amulet') {
 
-    const weapons = [ 'axe', 'bow', 'hammer', 'mace', 'spear', 'staff', 'sword'];
+    } else if (type === 'artifact') {
 
-    let isWeapon = false;
-    if (weapons.includes(type)) {
-        isWeapon = true;
+    } else if (type === 'potion') {
+        
     }
 
-    //const qualityLevel = ranNum(0, 5); // 6 quality levels
-    // "Normal" is twice correctly, make simple names for 2 lowest tiers
-    // The name generator uses different kind of tier naming
+    if (chance(50 + qLevel*3) && !isWeapon) {
+        const min = 1;
+        const max = (qLevel+1)*4 ;
+
+        const forType = selectFrom(weaponTypes);
+        const eff = new TypeDamageBonus(ranNum(min, max), forType);
+        effects.push(eff);
+    }
+
+    if (chance(50) && qLevel > 2) {
+        let min = 5;
+        let max = 50;
+        let percent = ranNum(min, max);
+        const effect = new IncreasedValue(percent);
+        effects.push(effect);
+    }
+    return effects;
+}
 
 
+const createItem = () => {
+    const others = ['amulet', 'artifact'];
+    const weapons = [ 'axe', 'bow', 'hammer', 'mace', 'spear', 'staff', 'sword'];
+    const types = others.concat(weapons);
+    const type = selectFrom(types);
+
+    const isWeapon = weapons.includes(type);
+    //log(`${type} isWeapon: ${isWeapon}`)
+
+    
 
     const imageSrc = `img/item/${type}${ranNum(1, itemImageAmounts[type])}.png`
-    //log(imageSrc)
 
-    const item = new Item(type, imageSrc, isWeapon)
+    let qLevel = 0;
+    if (chance(2)) {
+        qLevel = 5;
+    } else if (chance(5)) {
+        qLevel = 4;
+    } else if (chance(10)) {
+        qLevel = 3;
+    } else if (chance(20)) {
+        qLevel = 2;
+    } else if (chance(30)) {
+        qLevel = 1;
+    }      
+
+
+
+    const nameGenTypes = ['normal', 'normal', 'magic', 'rare', 'legendary', 'mythic'];
+    const name = rpgItemGen.createItem(type, nameGenTypes[qLevel]);
+    
+    
+    const valueMin = qLevel * 5 + 1;
+    const valueMax = valueMin + valueMin*2;
+    let sellValue = ranNum(valueMin, valueMax);
+    
+    // Create effects
+    const effects = createItemEffects(type, isWeapon, qLevel);
+    /*
+    let effectAmount = ranNum(0, 2) 
+    for (let i=0; i<effectAmount; i++) {
+
+    }
+    */
+    // If item has IncreasedValue effect, apply it
+    for (const eff of effects) {
+        if (eff.name === 'IncreasedValue') {
+            sellValue += Math.floor( sellValue * (eff.value/100) );
+        }
+    }
+
+    const item = new Item(name, type, isWeapon, imageSrc, qLevel, sellValue, effects)
     return item;
 }
 
+
+
+
+
 const createEnemy = () => {
     enemy.dead = false;
-    
-    const name = heroGen.getName();
-    enemy.name = name;
-    enemyNameElem.innerText = name;
-
-    enemyHpBarMain.style.width = `100%`;
-    enemyHpBarBg.style.width = `100%`;
-
+    enemy.name = heroGen.getName();;
    
-
     const imageNum = ranNum(1, settings.enemyImageAmount);
-    const imageSrc = `img/creature/creature (${imageNum}).jpg`;
-
-    enemyImageElem.src = imageSrc;
-    enemyImageElem.style.backgroundImage = `url('${imageSrc}')`;
+    enemy.image = `img/creature/creature (${imageNum}).jpg`;
+ 
 
     enemy.hp.max = settings.enemyMaxHp;
 
@@ -323,44 +313,38 @@ const createEnemy = () => {
         enemy.hp.max = settings.enemyMaxHp*10
     }
     enemy.hp.current = enemy.hp.max;
+    enemy.lootItem = createItem();
+}
+
+const setEnemyStyle = () => {
+    enemyNameElem.innerText = enemy.name;
+    enemyImageElem.style.backgroundImage = `url('${enemy.image}')`;
+
+    let hp = (enemy.hp.current / enemy.hp.max) * 100;
+    enemyHpBarMain.style.width = `${hp}%`;
+    enemyHpBarBg.style.width = `${hp}%`;
 
     enemyHpCurrent.innerText = enemy.hp.current;
     enemyHpMax.innerText = enemy.hp.max;
-
-    enemy.lootItem = createLootItem();
-
-    setLootItem();
 }
 
 
 const createLootItemLayers = () => {
-
     const pxInc = 5;
-
-    //const target = document.querySelector('#loot-container > .loot-item > .outer-wrap > .inner-wrap');
-
-    //3 layers, 2px: -2, 0, 2")
-    //5 layers, 2px: -4, -2, 0, 2, 4")
-    //7 layers, 2px: -6, -4, -2, 0, 2, 4, 6")
 
     for (let i=0; i<lootItemLayers.length; i++) {
         const elem = lootItemLayers[i];
-        //elem.classList.add('image');
         elem.style.backgroundImage = `url('${enemy.lootItem.imageSrc}')`;
-
-        //elem.id = "a"+(i+1); //first elem id is "a1", cant start with number
-
         const zPos =  -(Math.floor(lootItemLayers.length / 2)) + i*pxInc;  //pxInc: between layer elements
-        //log(px)
         elem.style.transform = "translateZ(" + zPos + "px";
-        //target.append(elem);
+
     }
 }
 
 
 
-const setLootItem = () => {
-    createLootItemLayers();
+const setLootItemStyle = () => {
+    //createLootItemLayers();
 
     const rarityColor = itemQuality[enemy.lootItem.qualityLevel].color;
     lootItemNormalGlow.style.boxShadow = `${rarityColor} 0px 0px 50px 20px`; 
@@ -368,6 +352,9 @@ const setLootItem = () => {
     //const imageLayers = document.querySelectorAll('#loot-container > .loot-item > .outer-wrap > .inner-wrap > .image');
     const front = lootItemLayers[0];
     const back = lootItemLayers[1];
+
+    front.style.backgroundImage = `url('${enemy.lootItem.imageSrc}')`;
+    back.style.backgroundImage = `url('${enemy.lootItem.imageSrc}')`;
 
     // Don't put outline shadows to low quality items
     if (enemy.lootItem.qualityLevel > 1) {
@@ -383,9 +370,7 @@ const setLootItem = () => {
 }
 
 
-const setViewerImage = (item) => {
-    //createLootItemLayers();
-
+const setViewerImage = item => {
     for (let i=0; i<viewerItemLayers.length; i++) {
         const pxInc = 2; //pxInc: between layers 
         const elem = viewerItemLayers[i];
@@ -468,6 +453,8 @@ const takeLoot = () => {
 
     setTimeout(() => {
         createEnemy();
+        setLootItemStyle();
+        setEnemyStyle();
         // Show enemy elem
         enemyContainer.classList.remove('hidden');
 
@@ -480,22 +467,25 @@ const takeLoot = () => {
 
         // Restore inv tab icon to closed chest
         invIcon.setAttribute('src', 'img/chest.png');
-        
+        save();
       }, animDuration);
 }
 
 
 const attackEnemy = () => {
-    
-     // Return early to avoid possibly triggering death multiple times.
+    // Return early to avoid possibly triggering death multiple times.
     if (enemy.dead) return false;
 
     let dmg = player.damage.base;
     dmg += player.damage.bonus;
     dmg += player.damage.typeBonus;
 
-    if (chance(player.crit.chance)) {
+    let attackAnim = animData.atk2;
+
+
+    if ( chance(player.crit.chance) ) {
         dmg *= player.crit.multiplier;
+        attackAnim = animData.impact1;
     }
     enemy.hp.current -= dmg;
 
@@ -531,8 +521,8 @@ const attackEnemy = () => {
         enemyImageElem.classList.add('damaged');
         enemyHpBarContainer.classList.add('damaged');
 
-        let attackAnim = animData.impact1;
-        attackAnim = animData.atk2;
+        //let attackAnim = animData.impact1;
+        //attackAnim = animData.atk2;
         playAnim(attackAnim, true);
 
         
@@ -559,6 +549,8 @@ const showTabView = i => {
     }
 
     bottomTabs[i].classList.add('selected');
+    player.tab = i;
+    save();
 }
 
 
@@ -604,7 +596,7 @@ const setListeners = () => {
     });
 
     enemyContainer.addEventListener('click', e => {
-        log(`Clicked enemy`);
+        //log(`Clicked enemy`);
         attackEnemy();
     });
 
@@ -660,7 +652,22 @@ const setListeners = () => {
         });
 
     }
+
+    const menuButton = document.getElementById('menu-button');
+    menuButton.addEventListener('click', e => {
+        showMenu(true);
+    });
     
+    const help = document.querySelector('#menu > .button.help')
+    const about = document.querySelector('#menu > .button.about')
+
+    help.addEventListener('click', e => {
+        showModal('help');
+    });
+
+    about.addEventListener('click', e => {
+        showModal('about');
+    });
 
 }
 
@@ -859,10 +866,10 @@ const animate = anim => {
 
 const createTestItems = (amount) => {
     for (let i=0; i<amount; i++) {
-        const item = createLootItem();
+        const item = createItem();
         player.inv.push(item);
-        setItemToSlot(item, invSlots[i], i);
     }
+
 }
 
 
@@ -892,7 +899,7 @@ const createInvSlots = () => {
 
 const createEquipmentSlots = () => {
     const slotNames = Object.getOwnPropertyNames(player.equipment);
-    log(slotNames);
+    //log(slotNames);
     const target = document.getElementById('equipment-container');
     
     for (let i=0; i<slotNames.length; i++) {
@@ -1041,7 +1048,7 @@ const sellItem = i => {
     // i is index in player inv
     const item = player.inv[i];
     const sellValue = item.sellValue;
-    player.addGold(sellValue);
+    addGold(sellValue);
     player.inv.splice(i, 1);
     clearInvSlot(i);
     clearInvSelection();
@@ -1115,7 +1122,9 @@ const equipItem = (itemIndex, slotElem) => {
     player.equipment[targetSlot] = item;
     setInvItems();
     showInItemViewer(slotElem);
-    setEquippedItems();
+    setEquippedItemsStyle();
+    setPlayerStats();
+    save();
 }
 
 
@@ -1135,49 +1144,16 @@ const unequipItem = slotName => {
 
     player.inv.push(item);
     player.equipment[slotName] = -1;
+
     setInvItems();
-
-    setEquippedItems();
-
-    //log(item);
-  
-
-
-
-    return false;
-
-    let targetSlot;
-    if (item.isWeapon) {
-        targetSlot = 'weapon';
-    } else if (item.type === 'amulet') {
-        targetSlot = 'amulet';
-    } else if (item.type === 'artifact') {
-        targetSlot = 'artifact';
-    }
-
-    //log(item.type);
-
-    // Check if slot has an item equipped already
-    let prevItem = null;
-    if (player.equipment[targetSlot] instanceof Item) {
-        prevItem = player.equipment[targetSlot];
-
-        // Put previously equipped item to equipped items place
-        player.inv[itemIndex] = prevItem
-    } else {
-        // No previously equipped items, just remove form inv
-        player.inv.splice(itemIndex, 1);
-    }
-
-    player.equipment[targetSlot] = item;
-    setInvItems();
-    showInItemViewer(slotElem);
-    setEquippedItems();
+    setEquippedItemsStyle();
+    setPlayerStats();
+    save();
 }
 
 
-const setEquippedItems = () => {
-    const items = player.equipment;
+const setEquippedItemsStyle = () => {
+    //const items = player.equipment;
 
     const slotNames = Object.getOwnPropertyNames(player.equipment);
     const slotCon = document.getElementById('equipment-container');
@@ -1191,7 +1167,6 @@ const setEquippedItems = () => {
 
 
         if (item instanceof Item) {
-           
             const imageCon = slot.querySelector('.image-container');
             const image = imageCon.querySelector('img.image');
             image.setAttribute('src', item.imageSrc);
@@ -1266,11 +1241,11 @@ const setPlayerStats = () => {
 
             for (const eff of item.effects) {
 
-                if (eff instanceof DamageBonus) {
+                if (eff.name === 'DamageBonus') {
                     bonusDamage += eff.value;
                 }
 
-                if (eff instanceof TypeDamageBonus) {
+                if (eff.name === 'TypeDamageBonus') {
                     if (eff.type === player.equipment.weapon.type) {
                         typeBonusDamage += eff.value;
                     }
@@ -1320,24 +1295,61 @@ const setAnimImages = () => {
 
 }
 
+const initNewGame = () => {
+    showMenu(false);
+    createEnemy();
+    setEnemyStyle();
+    setLootItemStyle();
+
+    player = new Player();
+
+    setInvItems();
+    setPlayerStats();
+    setEquippedItemsStyle();
+
+    showTabView(0);
+    save();
+}
 
 preloadImages(imagesToPreload).then(function(imgs) {
+
+
     setAnimImages();
     createInvSlots();
     createEquipmentSlots();
-    createEnemy();
 
+  
 
+  
+
+    
+
+    if ( saveExists() ) {
+        // load save
+
+        loadSave();
+        setLootItemStyle();
+    } else {
+        //start new game
+        initNewGame()
+        createTestItems(20);  //debug
+    }
+
+    setEnemyStyle()
+
+  
+
+    setInvItems();
+    setEquippedItemsStyle();
+    setPlayerStats();
     setListeners();
 
-    showTabView(0);
+    //const enemyW = enemyImageElem.clientWidth;
+    //enemyHpBarContainer.style.width = `${enemyW+50}px`
 
-    createTestItems(20);  //debug
-    //setInvItems()
+    showTabView(player.tab);
 
-    const enemyW = enemyImageElem.clientWidth;
-    //log(enemyW)
-    enemyHpBarContainer.style.width = `${enemyW+50}px`
+    save();
 
 }, function(errImg) {
     // at least one image failed to load

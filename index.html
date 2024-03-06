@@ -11,16 +11,28 @@
     <link media='screen' href='css/inv-view.css' type='text/css' rel='stylesheet' /> 			
     <link media='screen' href='css/stats.css' type='text/css' rel='stylesheet' />
 
+    <link media='screen' href='css/modal.css' type='text/css' rel='stylesheet' /> 
+    <link media='screen' href='css/menu.css' type='text/css' rel='stylesheet' /> 
+
     <link media='screen' href='css/debug.css' type='text/css' rel='stylesheet' /> 			
 
     <meta name="viewport" content="initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, width=device-width, height=device-height, target-densitydpi=device-dpi">
     <meta name="mobile-web-app-capable" content="yes">
 
-    <meta name="theme-color" content="#212121">
-		<meta name='msapplication-navbutton-color' content='#212121'><!-- Windows Phone -->		
-		<meta name='apple-mobile-web-app-status-bar-style' content='#212121'><!-- iOS Safari -->
+    <!--<meta name="theme-color" content="#212121">
+		<meta name='msapplication-navbutton-color' content='#212121'>--> <!-- Windows Phone -->		
+		<meta name='apple-mobile-web-app-status-bar-style' content='#212121'> <!-- iOS Safari -->
 
-    <link rel='shortcut icon' href='favicon.ico'>
+
+    <link rel="apple-touch-icon" sizes="180x180" href="icon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="icon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="icon/favicon-16x16.png">
+    <link rel="manifest" href="icon/site.webmanifest">
+    <link rel="mask-icon" href="icon/safari-pinned-tab.svg" color="#681f1f">
+    <meta name="msapplication-TileColor" content="#252525">
+    <meta name="theme-color" content="#181818">
+
+    <!--<link rel='shortcut icon' href='favicon.ico'>-->
     <title>TapperLooter</title>
   </head>
 
@@ -29,12 +41,89 @@
 
     <div id='content'>
 
+
+      <div id='modal-container'>
+        <div class='modal-window help'>
+          <div class='title'>Help</div>
+          <div class='content'>
+            <p>
+            Tap enemy to defeat it and loot items. You can inspect looted items in inventory, and sell or equip them. You can't loot more items if inventory is full. 
+            </p>
+            <p>
+              To un-equip item, tap the item icon in equipment view.
+            </p>
+
+        
+            Item rarity tiering is color coded as follows:<br>
+            • <span style="color:#9d9d9d;">Weak</span><br>
+            • <span style="color:#e6e6e6;">Common</span><br>
+            • <span style="color:#1eff00;">Uncommon</span><br>
+            • <span style="color:#0073e6;">Rare</span><br>
+            • <span style="color:#a335ee;">Epic</span><br>
+            • <span style="color:#ff8000;">Legendary</span><br>
+
+            <p>Higher tier items have higher maximum rolls so they can roll higher stats than lower tiers, but not always. There are no unique named items in the game (maybe in the future).</p>
+
+            <p>There is no goal in the game.</p>
+
+        
+         
+          </div>
+          <div class='button' onclick=hideModal()>Close</div>
+        </div>
+  
+        <div class='modal-window about'>
+          <div class='title'>About</div>
+          <div class='content'>
+            This is a client side JavaScript tapper & item looting game.
+            <br>
+            <br>
+            <br>
+            You can contact me (the developer) via email: markus.vaananen(at)gmail.com
+  
+          </div>
+          <div class='button' onclick=hideModal()>Close</div>
+        </div>
+      </div>
+
+      <div id='menu-container'>
+
+        <div id='menu' class=''>
+  
+          <div id='title-container'>
+            <div id='title' class=''>Tapper | Looter</div>
+          </div>
+  
+          
+
+          <div class='button small reset' onclick=reset()>Reset save</div>
+
+          <div class='button small help'>Help</div>
+  
+          <div class='button small about'>About</div>
+         
+
+          <div class='button' onclick=showMenu(false)>Back to game</div>
+  
+        </div>
+  
+      </div>
+
+
+
       <div id='border-layer'></div>
+      
 
       <div id='view-container'>
 
 
+
         <div class='view combat hidden'>
+
+          <div id='menu-button-container'>
+            <div id='menu-button'>Menu</div>
+          </div>
+     
 
          <div id='enemy-container'>
 
@@ -42,7 +131,7 @@
             <div id='enemy-name'> </div>
           </div>
           <div id='enemy-image-container'>
-            <div id='enemy-image' src='img/creature.jpg'> </div>
+            <div id='enemy-image'></div>
           </div>
 
           <div id='enemy-hp-bar-container'>
@@ -100,8 +189,11 @@
 
         <div class='view inv hidden'>
 
+      
+
           <div id='gold-container'>
 
+      
           
 
             <div class='gold-amount-container'>
@@ -244,7 +336,9 @@
     <script src='js/anims.js'></script>
     <script src='js/settings.js'></script>
     <script src='js/util.js'></script>
+    <script src='js/save.js'></script>
     <script src='js/main.js'></script>
+
 
   </body>
 

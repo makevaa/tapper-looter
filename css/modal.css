@@ -1,0 +1,125 @@
+#modal-container {
+    position:absolute;
+    width:100vw;
+    height:100vh;
+    background-color: rgba(0,0,0, 0.8);
+    z-index:3;
+    visibility:hidden;
+
+    display:flex;
+	justify-content: center;
+	align-items: center;
+    xtransition:all 0.2s;
+}
+
+#modal-container > .modal-window {
+    xborder:1px solid grey;
+    width: 100%;
+    height:100%;
+    xmax-width:500px;
+    xmax-height:400px;
+    visibility:hidden;
+    position:absolute;
+    xopacity:0;
+    xtransition:all 0.2s;
+   
+
+    background-color:rgb(37, 37, 37);
+    color:grey;
+    font-family: Georgia, serif;
+    padding: 30px 10px 50px 10px;
+
+    display:flex;
+    justify-content: top;
+    align-items: center;
+    flex-direction:column;
+
+    border-style: solid;
+	border-image-source: url('../img/border_big_silver.png');
+	border-image-slice: 150;
+	border-image-width: 25;
+	border-image-outset: 0;
+	border-image-repeat: round;
+
+    box-shadow: 0px 0px 30px 10px rgba(0,0,0, 0.5),
+                10px 10px 10px 0px rgba(0,0,0, 0.5),
+                inset 0px 0px 10px 10px rgba(0,0,0, 0.8);
+    
+
+    background-image:url('../img/gran1b.jpg');
+    background-position: center;
+    background-size:contain;
+
+}
+
+
+.modal-window > .title {
+    xborder: 1px solid grey;
+    width:100%;
+    padding:10px;
+    font-size:2em;
+    font-family: Georgia, serif;
+    z-index:2;
+    color:#f5e9d8;
+
+    text-shadow:0px 0px 10px rgba(0, 0, 0, 0.5), 
+                0px 0px 3px rgba(0, 0, 0, 0.5),
+                2px 2px 0px rgba(55, 5, 5, 0.99),
+                0px 0px 8px orange,
+                0px 0px 3px rgb(255, 255, 255);
+        
+    xtext-shadow: 0px 0px 10px orange, 0px 0px 5px rgb(160, 160, 160);
+    xbackground-color:rgba(0,0,0, 0.5);
+}
+
+.modal-window > .content {
+    xborder: 1px solid red;
+    padding:20px;
+    xmargin:10px;
+    width:100%;
+    overflow-y:scroll;
+    max-height:70%;
+    color:rgb(219, 219, 219);
+    background-color:rgba(0,0,0, 0.5);
+    font-family: Arial;
+}
+
+.modal-window > .button {
+    xborder: 1px solid red;
+    margin:auto;
+    xpadding:10px;
+    margin-bottom:30px;
+    text-align:center;
+    width:300px;
+    height:86px;
+
+    display:flex;
+    justify-content: center;
+    align-items: center;
+
+    background-image: url('../img/button.png');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+
+    font-size:2em;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    text-transform: uppercase;
+
+    color:#ffffff;
+    text-shadow: 0px 0px 10px orange, 0px 0px 5px rgb(160, 160, 160);
+    xtransition: all 0.07s;
+    position:absolute;
+    bottom:0;
+}
+
+.modal-window > .button:hover {
+    background-image: url('../img/button_light.png');
+}
+
+.modal-window > .button:active {
+    background-image: url('../img/button_dark.png');
+    font-size:1.9em;
+}
+
+    
