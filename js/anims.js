@@ -14,7 +14,16 @@ const animData = {
         frameH: 256,
         rows: 1,
         framesPerRow: 14,
-        frameDur: 30,
+        frameDur: 5,
+    },
+
+    atk2red: {
+        imageSrc:"img/anim/hit_ring_red.png",
+        frameW: 256,
+        frameH: 256,
+        rows: 1,
+        framesPerRow: 14,
+        frameDur: 5,
     },
 
     explosion1: {
@@ -30,8 +39,8 @@ const animData = {
         imageSrc:"img/anim/impact1.png",
         frameW: 128,
         frameH: 128,
-        frameDur: 5,
-        rows: 8,
+        frameDur: 16,
+        rows: 3,
         framesPerRow: 8,
     },
 	

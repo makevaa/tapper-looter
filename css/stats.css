@@ -1,4 +1,6 @@
 
+
+
 #view-container > .view.stats {  
     xborder:1px solid red;
     xposition:relative;
@@ -9,6 +11,7 @@
     xalign-content: center;
     justify-content: start;
     height:100%;
+    overflow-y: scroll;
 }
 
 
@@ -32,12 +35,12 @@
     xborder: 2px solid rgb(0, 0, 0);
     xborder-radius: 5px;
     border-bottom:2px solid black;
-    background-color:rgba(0,0,0,0.3);
+    background-color:rgba(0,0,0,0.6);
     xbox-shadow:  rgba(0, 0, 0, 0.7) 3px 3px 5px 0px;
 
     xheight:100%;
     width:100%;
-    xflex:1;
+    flex:1;
 
     xmargin-bottom: 5px;
     padding: 0px 0px 10px 15px;
@@ -48,6 +51,8 @@
     align-items: start;
     justify-items:start;
     flex-direction:column;
+
+    overflow:scroll;
     
 }
 
@@ -76,7 +81,7 @@
 
 #equipment-container > .slot > .mid  {
     xborder:1px solid orange;
-    xheight:70%;
+    height:70%;
     width:100%;
     
     xpointer-events: none;
@@ -86,38 +91,16 @@
     flex: 1;
 }
 
-
-/* the area where the image is */
-#equipment-container > .slot > .mid > .image-wrapper {
-    xborder:1px solid grey;
-    xheight:100%;
-    xmargin-top:5px;
-    width:25%;
-    xaspect-ratio:1/1;
-    xoverflow:hidden;
-    xheight:4em;
-    xheight:100%;
-    xwidth:100%;
-    xflex:1em;
- 
-    xpointer-events: none;
-    xposition:relative;
-
-    display:flex;
-    flex-direction:row;
-    justify-content: center;
-    align-items: start;
-}
-
-#equipment-container > .slot > .mid >  .image-wrapper > .label {
+#equipment-container > .slot > .mid > .label {
     xborder:1px solid grey;
     color:grey;
     font-family:consolas,monospace;
     xwidth: 3em;
+    height:100%;
     font-size:1em;
     text-align:center;
-    padding:5px 5px 5px 5px;
-    xpadding:5px;
+    xpadding:5px 5px 5px 5px;
+    padding:5px;
     letter-spacing: -3px;
 
     writing-mode: vertical-rl;
@@ -128,14 +111,49 @@
     xheight:2em;
 }
 
+
+/* the area where the image is */
+#equipment-container > .slot > .mid > .image-wrapper {
+    border:2px solid rgba(0, 0, 0, 0.0); /* padding hack, works decent */
+    xheight:100%;
+    xmargin-top:5px;
+    padding:10px;
+  
+    width:15%;
+    max-width:100px;
+    max-height:100px;
+    xheight:100%;
+    xaspect-ratio:1/1;
+
+    xoverflow:hidden;
+    xheight:4em;
+    xheight:100%;
+    xwidth:100%;
+    xflex:1em;
+ 
+    xpointer-events: none;
+    xposition:relative;
+
+    display:flex;
+    xflex-direction:row;
+    justify-content: center;
+    xalign-items: center;
+}
+
+
+
  
 
 #equipment-container > .slot > .mid > .image-wrapper > .image-container {
+    xborder:1px solid green!important;
     xpointer-events: none;
     xwidth:100%;
     xheight:100%;
-    width:80%;
-    xheight:80%;
+    xwidth:100%;
+
+    height:100%;
+    xheight:auto;
+
     aspect-ratio: 1/1;
  
 
@@ -147,13 +165,21 @@
     box-shadow: 0px 0px 0px 1px rgb(100, 100, 100), 0px 0px 0px 4px rgba(0, 0, 0, 1), inset 0px 0px 5px 5px rgba(0,0,0,0.5), /* vignette */ 0px 0px 3px 3px rgba(0, 0, 0, 0.5);
     
     border-radius:5px;
+
+    
+    display:flex;
+    flex-direction:row;
+    justify-content: center;
+    align-items: center;
 }
 
 #equipment-container > .slot > .mid > .image-wrapper > .image-container  > img.image {
     pointer-events: none;
-    width:100%;
-    height:100%;
     border-radius:5px;
+    width:90%;
+    xheight:100%;
+
+    xaspect-ratio: 1/1;
 }
 
 #equipment-container > .slot > .mid > .effects {
@@ -164,8 +190,9 @@
     height:100%;
     xborder-radius:5px;
     color:rgb(202, 136, 50);
+    color: #6969ff;
     xcolor:grey;
-    padding: 10px 10px 5px 20px;
+    padding: 0px 10px 0px 20px;
 }
 
 

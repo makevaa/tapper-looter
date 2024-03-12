@@ -18,12 +18,12 @@
 }
 
 #view-container > .view.inv > #gold-container {
-    xborder:1px solid red;
+    xborder:1px solid magenta;
     height:5%;
     width:100%;
 
-    margin-top:15px;
-    margin-bottom:10px;
+    xmargin-top:15px;
+    xmargin-bottom:10px;
     padding: 5px 20% 5px 20%;
 
 
@@ -33,6 +33,7 @@
     justify-content: right;
 
     background-color: rgba(0, 0, 0, 0.3);
+    xz-index:999;
 }
 
 #gold-container > .image-container {
@@ -98,12 +99,14 @@
 #item-viewer-container {
     xborder:1px solid red;
     width:100%;
-    height:30%;
+    height:35%;
 
     color:grey;
+    xbackground-color:black;
 
     xjustify-content: center;
     xalign-items: top;
+
 
 }
 
@@ -126,6 +129,7 @@
 #item-viewer > .name-container {
     xborder:1px solid cyan;
     xposition:relative;
+    background-color:black;
 
     width:70%;
 }
@@ -188,6 +192,7 @@
     xborder:1px solid red;
     xaspect-ratio: 1/1;
     xheight:1em;
+    
 }
 
 #item-viewer > .name-container > .type-container > .value-container > .image-container > .image {
@@ -213,6 +218,7 @@
 #item-viewer > .name-container > .effects-container > .effect {
     xborder:1px solid red;
     color:rgb(202, 136, 50);
+    color: #6969ff;
     xcolor: #94865a;
 }
 
@@ -221,9 +227,8 @@
 #item-viewer > .image-container {
     border:5px solid rgb(44, 44, 44);
     xborder-style: outset;
-    background-color: rgba(0, 0, 0, 0.3);
-    box-shadow: inset rgba(0, 0, 0, 0.5) 0px 0px 5px 5px,
-                    rgba(0, 0, 0, 0.5) 0px 0px 5px 2px;
+    background-color: rgba(0, 0, 0, 0.5);
+    box-shadow: inset rgba(0, 0, 0, 0.5) 0px 0px 5px 5px, rgba(0, 0, 0, 0.5) 0px 0px 5px 2px;
     margin-right:10px;
     aspect-ratio:1/1;
     width:30%;
@@ -240,6 +245,8 @@
     align-items: center;
     justify-content:center;
     xalign-items: end;
+
+    xbackground-color:black;
 }
 
 #item-viewer > .image-container > .viewer-item {
@@ -493,7 +500,7 @@
     align-items: center;
 
 
-    background-image: url('/img/button.png');
+    background-image: url('../img/button.png');
     
   
     background-position: center;

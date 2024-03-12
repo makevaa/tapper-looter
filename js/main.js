@@ -1,5 +1,64 @@
 // main.js
 
+
+const bottomTabs = document.querySelectorAll('#bottom-bar > .tab');
+const invIcon = document.querySelector('#bottom-bar > .tab.inv > img');
+
+const views = document.querySelectorAll('#view-container > .view');
+const combatView = document.querySelector('#view-container > .combat.view');
+
+
+const lootItemContainer = document.getElementById('loot-container');
+const lootItemImage = document.querySelector('.loot-item');
+const lootItemNameContainer = document.getElementById('loot-name-container');
+const lootItemName = document.getElementById('loot-name');
+const lootItemLayers = document.querySelectorAll('#loot-container > .loot-item > .outer-wrap > .inner-wrap > .image');
+const lootItemNormalGlow = document.querySelector('.item-normal-glow');
+
+const enemyContainer = document.getElementById('enemy-container');
+const enemyNameElem = document.getElementById('enemy-name');
+const enemyImageContainer = document.getElementById('enemy-image-container');
+const enemyImageElem = document.getElementById('enemy-image');
+
+const enemyHpBarContainer = document.getElementById('enemy-hp-bar-container');
+const enemyHpBarMain = document.querySelector('#enemy-hp-bar-container > .bar.main');
+const enemyHpBarBg = document.querySelector('#enemy-hp-bar-container > .bar.bg');
+
+const enemyHpCurrent = document.querySelector('#enemy-hp-bar-container > .hp-container > .current');
+const enemyHpMax = document.querySelector('#enemy-hp-bar-container > .hp-container > .max');
+
+
+const invGrid = document.getElementById('inv-grid');
+let invSlots; // set in createInvSlots() function
+
+const itemViewerName = document.querySelector('#item-viewer > .name-container > .name');
+
+const itemViewerQualityTitle = document.querySelector('#item-viewer > .name-container > .type-container > .quality-title');
+
+const itemViewerTypeTitle = document.querySelector('#item-viewer > .name-container > .type-container > .type');
+
+const itemViewerSellValueContainer = document.querySelector('#item-viewer > .name-container > .type-container > .value-container');
+const itemViewerSellValue = document.querySelector('#item-viewer > .name-container > .type-container > .value-container > .value');
+
+const itemViewerEffectsContainer = document.querySelector('#item-viewer > .name-container > .effects-container');
+
+//const viewerItemContainer = document.getElementById('loot-container');
+//const viewerItemImage = document.querySelector('.loot-item');
+const itemViewerImage = document.querySelector('#item-viewer > .image-container > .viewer-item');
+
+const itemViewerBottomShadow = document.querySelector('#item-viewer > .image-container > .viewer-item > .item-bottom-shadow-container');
+
+const viewerItemLayers = document.querySelectorAll('#item-viewer > .image-container > .viewer-item > .outer-wrap > .inner-wrap > .image');
+const viewerItemNormalGlow = document.querySelector('#item-viewer > .image-container > .viewer-item > .outer-wrap > .inner-wrap > .item-normal-glow-container > .item-normal-glow');
+
+
+const playerGoldElem = document.querySelector('#gold-container > .gold-amount-container > .gold-amount');
+const goldAnimContainer = document.querySelector('#gold-container > .gold-anim-container');
+const goldAnim = document.querySelector('#gold-container > .gold-anim-container > .gold-anim');
+
+const modal = document.getElementById('modal-container');
+
+
 let enemy = {
     name:-1,
     dead: false,
@@ -16,6 +75,7 @@ class Player {
         this.invSlots = 30,
         this.inv = [],
         this.gold = 0,
+        this.goldFind = 0; 
         this.kills = 0,
         this.tab = 0,
     
@@ -89,7 +149,7 @@ class DamageBonus extends Effect {
     constructor(dmg) {
         super('DamageBonus');
         this.value = dmg;
-        this.text = `Damage +${dmg}`;
+        this.text = `+${dmg} damage`;
 
     }
 }
@@ -99,10 +159,11 @@ class IncreasedValue extends Effect {
     constructor(percent) {
         super('IncreasedValue');
         this.value = percent;
-        this.text = `Increased value: +${percent}%`;
+        this.text = `+${percent}% gold value `;
 
     }
 }
+
 
 // Damage bonus if using specific weapon type
 class TypeDamageBonus extends Effect {
@@ -110,7 +171,8 @@ class TypeDamageBonus extends Effect {
         super('TypeDamageBonus');
         this.value = dmg;
         this.type = type;
-        this.text = `${toTitleCase(type)} damage +${dmg}`;
+        //this.text = `${toTitleCase(type)} damage +${dmg}`;
+        this.text = `+${dmg} ${type} damage `;
     }
 }
 
@@ -118,80 +180,30 @@ class CritChance extends Effect {
     constructor(chance) {
         super('CritChance');
         this.value = chance;
-        this.text = `Crit chance +${chance}%`;
+        this.text = `Critical chance +${chance}%`;
+
+    }
+}
+
+class CritDamage extends Effect {
+    constructor(percent) {
+        super('CritDamage');
+        this.value = percent;
+        this.text = `Critical damage +${percent}%`;
+
+    }
+}
+
+class GoldFind extends Effect {
+    constructor(percent) {
+        super('GoldFind');
+        this.value = percent;
+        this.text = `Gain ${percent}%  more gold`;
 
     }
 }
 
 
-/*
-WoW item quality: https://wowpedia.fandom.com/wiki/Quality
-Poor	157	157	157	0.62	0.62	0.62	#9d9d9d	Gray
-Common	255	255	255	1.00	1.00	1.00	#ffffff	White
-Uncommon	30	255	0	0.12	1.00	0.00	#1eff00	Green
-Rare	0	112	221	0.00	0.44	0.87	#0070dd	Blue
-Epic	163	53	238	0.64	0.21	0.93	#a335ee	Purple
-Legendary	255	128	0	1.00	0.50	0.00	#ff8000	Orange
-Artifact	230	204	128	0.90	0.80	0.50	#e6cc80	Light Gold
-Heirloom	0	204	255	0.00	0.8	1.0	#00ccff	Blizzard Blue
-WoW Token	0	204	255	0.00	0.8	1.0	#00ccff	Blizzard Blue
-*/
-
-const bottomTabs = document.querySelectorAll('#bottom-bar > .tab');
-const invIcon = document.querySelector('#bottom-bar > .tab.inv > img');
-
-const views = document.querySelectorAll('#view-container > .view');
-const combatView = document.querySelector('#view-container > .combat.view');
-
-
-const lootItemContainer = document.getElementById('loot-container');
-const lootItemImage = document.querySelector('.loot-item');
-const lootItemNameContainer = document.getElementById('loot-name-container');
-const lootItemName = document.getElementById('loot-name');
-const lootItemLayers = document.querySelectorAll('#loot-container > .loot-item > .outer-wrap > .inner-wrap > .image');
-const lootItemNormalGlow = document.querySelector('.item-normal-glow');
-
-const enemyContainer = document.getElementById('enemy-container');
-const enemyNameElem = document.getElementById('enemy-name');
-const enemyImageElem = document.getElementById('enemy-image');
-
-const enemyHpBarContainer = document.getElementById('enemy-hp-bar-container');
-const enemyHpBarMain = document.querySelector('#enemy-hp-bar-container > .bar.main');
-const enemyHpBarBg = document.querySelector('#enemy-hp-bar-container > .bar.bg');
-
-const enemyHpCurrent = document.querySelector('#enemy-hp-bar-container > .hp-container > .current');
-const enemyHpMax = document.querySelector('#enemy-hp-bar-container > .hp-container > .max');
-
-
-const invGrid = document.getElementById('inv-grid');
-let invSlots; // set in createInvSlots() function
-
-const itemViewerName = document.querySelector('#item-viewer > .name-container > .name');
-
-const itemViewerQualityTitle = document.querySelector('#item-viewer > .name-container > .type-container > .quality-title');
-
-const itemViewerTypeTitle = document.querySelector('#item-viewer > .name-container > .type-container > .type');
-
-const itemViewerSellValueContainer = document.querySelector('#item-viewer > .name-container > .type-container > .value-container');
-const itemViewerSellValue = document.querySelector('#item-viewer > .name-container > .type-container > .value-container > .value');
-
-const itemViewerEffectsContainer = document.querySelector('#item-viewer > .name-container > .effects-container');
-
-//const viewerItemContainer = document.getElementById('loot-container');
-//const viewerItemImage = document.querySelector('.loot-item');
-const itemViewerImage = document.querySelector('#item-viewer > .image-container > .viewer-item');
-
-const itemViewerBottomShadow = document.querySelector('#item-viewer > .image-container > .viewer-item > .item-bottom-shadow-container');
-
-const viewerItemLayers = document.querySelectorAll('#item-viewer > .image-container > .viewer-item > .outer-wrap > .inner-wrap > .image');
-const viewerItemNormalGlow = document.querySelector('#item-viewer > .image-container > .viewer-item > .outer-wrap > .inner-wrap > .item-normal-glow-container > .item-normal-glow');
-
-
-const playerGoldElem = document.querySelector('#gold-container > .gold-amount-container > .gold-amount');
-const goldAnimContainer = document.querySelector('#gold-container > .gold-anim-container');
-const goldAnim = document.querySelector('#gold-container > .gold-anim-container > .gold-anim');
-
-const modal = document.getElementById('modal-container');
 
 
 const createItemEffects = (type, isWeapon, qLevel) => {
@@ -228,6 +240,32 @@ const createItemEffects = (type, isWeapon, qLevel) => {
         effects.push(eff);
     }
 
+
+    if (chance(50 + qLevel*3)) {
+        const min = 1;
+        const max = (qLevel+1)*2 ;
+
+        const forType = selectFrom(weaponTypes);
+        const eff = new CritChance(ranNum(min, max));
+        effects.push(eff);
+    }
+
+
+
+    if (chance(50 + qLevel*3)) {
+        const min = 5;
+        const max = (qLevel+1)*5 ;
+        const eff = new CritDamage(ranNum(min, max));
+        effects.push(eff);
+    }
+
+    if (chance(50) && !isWeapon) {
+        const min = 5;
+        const max = (qLevel+1)*5 ;
+        const eff = new GoldFind(ranNum(min, max));
+        effects.push(eff);
+    }
+
     if (chance(50) && qLevel > 2) {
         let min = 5;
         let max = 50;
@@ -243,7 +281,8 @@ const createItem = () => {
     const others = ['amulet', 'artifact'];
     const weapons = [ 'axe', 'bow', 'hammer', 'mace', 'spear', 'staff', 'sword'];
     const types = others.concat(weapons);
-    const type = selectFrom(types);
+    let type = selectFrom(types);
+    //type = 'artifact'; //testing names
 
     const isWeapon = weapons.includes(type);
     //log(`${type} isWeapon: ${isWeapon}`)
@@ -399,6 +438,7 @@ const setViewerImage = item => {
     }
 }
 
+
 const flashInvIcon = () => {
     invIcon.classList.add('full');
     setTimeout(() => {
@@ -406,16 +446,13 @@ const flashInvIcon = () => {
     }, 100);
 }
 
+
 const takeLoot = () => {
     const item = enemy.lootItem;
     if (item.looted) { return false }
     if (player.inv.length >= player.invSlots) {
-        // inv is full, cant loot
-        // Move inv tab icon
-        flashInvIcon();
-       
-    
-
+        // Inv is full, cant loot
+        flashInvIcon(); // Move inv tab icon
         return false;
     }
 
@@ -429,14 +466,9 @@ const takeLoot = () => {
 
 
 
-    let animDuration = 200; //ms
 
 
-    //transition: all 0.5s;
-
-      
     // Change inv tab icon to open chest (item "goes" to chest)
-    
     invIcon.setAttribute('src', 'img/chest_open.png');
 
     
@@ -449,7 +481,7 @@ const takeLoot = () => {
     lootItemImage.style.transform = `translateY(${moveAmount}px) scale(0)`;
     lootItemNameContainer.style.transform = `translateY(${moveAmount}px) scale(0)`;
     
-
+    let animDuration = 200; //ms
 
     setTimeout(() => {
         createEnemy();
@@ -472,7 +504,7 @@ const takeLoot = () => {
 }
 
 
-const attackEnemy = () => {
+const attackEnemy = (pos) => {
     // Return early to avoid possibly triggering death multiple times.
     if (enemy.dead) return false;
 
@@ -485,7 +517,8 @@ const attackEnemy = () => {
 
     if ( chance(player.crit.chance) ) {
         dmg *= player.crit.multiplier;
-        attackAnim = animData.impact1;
+        dmg = Math.floor(dmg);
+        attackAnim = animData.atk2red;
     }
     enemy.hp.current -= dmg;
 
@@ -499,7 +532,7 @@ const attackEnemy = () => {
     if (enemy.hp.current <= 0) {
         // Enemy is dead
         //log('Enemy is dead');
-        playAnim(animData.explosion1, false);
+        playAnim(animData.explosion1, false, pos);
         enemy.dead = true;
         player.kills++;
 
@@ -515,19 +548,18 @@ const attackEnemy = () => {
 
 
 
-
     } else {
         // Set hp bar or something here, enemy is not dead yet
-        enemyImageElem.classList.add('damaged');
+        enemyImageContainer.classList.add('damaged');
         enemyHpBarContainer.classList.add('damaged');
 
         //let attackAnim = animData.impact1;
         //attackAnim = animData.atk2;
-        playAnim(attackAnim, true);
+        playAnim(attackAnim, true, pos);
 
         
         setTimeout(() => {
-            enemyImageElem.classList.remove('damaged');
+            enemyImageContainer.classList.remove('damaged');
             enemyHpBarContainer.classList.remove('damaged');
         }, 200);
         
@@ -558,18 +590,15 @@ const setListeners = () => {
     for (let i=0; i<bottomTabs.length; i++) {
         const tab = bottomTabs[i];
         tab.addEventListener('click', e => {
-    
             showTabView(i);
         });
     }
 
 
     combatView.addEventListener('click', e => {
-        const x = e.clientX;
-        const y = e.clientY;
-
+        //const x = e.clientX;
+        //const y = e.clientY;
         //log(`x: ${x}, y: ${y}`);
-      
     });
 
     // Disable long-tap context menu on mobile
@@ -579,33 +608,19 @@ const setListeners = () => {
         return false;
    };
     
-   /*
-    // Debug buttons
-    const createEnemyDebug = document.querySelector('.debug > .create-monster');
-    createEnemyDebug.addEventListener('click', e => {
-        createEnemy();
-    }); */
-
     lootItemContainer.addEventListener('click', e => {
-        const x = e.clientX;
-        const y = e.clientY;
-        //log(`x: ${x}, y: ${y}`);
-
+        //const x = e.clientX;
+        //const y = e.clientY;
         takeLoot();
-      
     });
 
     enemyContainer.addEventListener('click', e => {
-        //log(`Clicked enemy`);
-        attackEnemy();
+        const x = e.clientX;
+        const y = e.clientY;
+        log(`x: ${x}, y: ${y}`);
+        const pos = {x:x, y:y}
+        attackEnemy(pos);
     });
-
-    /*
-    const atk1 = new Image();
-    atk1.src = animData.atk1.imageSrc;
-    //atk1.addEventListener("load", () => 'asd', false);
-    animData.atk1.img = atk1;
-    */
 
 
     invGrid.addEventListener('click', e => {
@@ -615,7 +630,6 @@ const setListeners = () => {
             clearInvSelection();
             clearItemViewer();
         }
-        //log(e.target);
     });
 
     const sellSelected = document.getElementById('sell-selected');
@@ -726,7 +740,8 @@ const showInItemViewer = (elem) => {
     for (const effect of item.effects) {
         const effectElem = document.createElement('div');
         effectElem.classList.add('effect');
-        effectElem.innerText = `• ${effect.text}`;
+        let symbol = '◆'; // • ♦ ◆ ⟐
+        effectElem.innerText = `${symbol} ${effect.text}`;
         itemViewerEffectsContainer.append(effectElem);
     }
 
@@ -759,13 +774,13 @@ const clearItemViewer = () => {
 
 
 */
-const playAnim = (anim, offset=false) => {
+const playAnim = (anim, offset=false, pos) => {
    
 
 
     // Create and insert new canvas element
     const canvas = document.createElement('canvas');
-    canvas.classList.add('anim-canvas');
+    canvas.classList.add('anim-canvas');    
     canvas.width = anim.frameW;
     canvas.height = anim.frameH;
 
@@ -781,6 +796,12 @@ const playAnim = (anim, offset=false) => {
  
     let x = enemyImg.x + enemyImg.width/2 - canvas.width/2;
     let y = enemyImg.y + enemyImg.height/2 - canvas.height/2;
+    x = Math.floor(x);
+    y = Math.floor(y);
+
+    //x = Math.floor(pos.x)
+    //y = Math.floor(pos.y)
+
 
     // Randomize animation position
     if (offset) {
@@ -812,54 +833,77 @@ const playAnim = (anim, offset=false) => {
         image: anim.image,
     }
 
-
-    animate(animObj);
+    animate(animObj)
+   
 }
 
 
-const animate = anim => {
+const animate =  (anim) => {
+    const requestAnimationFrame = window.requestAnimationFrame;
+    const cancelAnimationFrame = window.cancelAnimationFrame;
+    let myReq;
+    let finished = false;
+
     const canvas = anim.canvas;
     const ctx = anim.ctx
-
+ 
     let column = 0;
 
-    const animationLoop = now => {
-        const elapsed = now - anim.prevTime;
-     
 
-        if (anim.frame >= anim.frames) {
-            // Animation has ended
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            setTimeout(() => {
-                canvas.remove();
-            }, 300);
+    const animationLoop = now => {
+
+        //log('loop');
+
+        if ( !finished ) {
+            myReq = requestAnimationFrame(animationLoop);
+        } else {
+            //log('Finished animation.');
+            cancelAnimationFrame(myReq);
+            canvas.remove();
             return true;
         }
+       
+        const elapsed = now - anim.prevTime;
 
+        //anim.prevTime = now;
+
+  
         if (elapsed >= anim.frameDur) {
-            //log('next frame')
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            //ctx.drawImage  (image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
-            const row = Math.floor(anim.frame / anim.framesPerRow);
-
-            if (anim.rows > 1 && anim.frame % anim.framesPerRow === 0) {
-                column = 0;
-            }
-            //log(column)
-
-	        ctx.drawImage(anim.image, column*anim.w, row*anim.h, anim.w, anim.h, 0, 0, canvas.width, canvas.height);
             anim.prevTime = now;
             anim.frame++;
             column++;
+
+            //log(`anim.frame: <${anim.frame}>` );
+
+            const row = Math.floor(anim.frame / anim.framesPerRow);
+            if (anim.rows > 1 && anim.frame % anim.framesPerRow === 0) {
+                column = 0;
+            }
+
+            //ctx.drawImage  (image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+	        ctx.drawImage(anim.image, column*anim.w, row*anim.h, anim.w, anim.h, 0, 0, canvas.width, canvas.height);
+
+            //log(`${column*anim.w}, ${row*anim.h}`)
+            //log(`anim.frame: <${anim.frame}>, ${row*anim.h}`)
+          
+        }
+
+        
+        if (anim.frame >= anim.frames) {
+            finished = true;
         }
 
 
-
-        window.requestAnimationFrame(animationLoop);
+       
     }
 
     // Request 1st frame to start animation loop
-    animationLoop();
+    myReq = animationLoop();
+   
+
+
+
 }
 
 
@@ -869,7 +913,6 @@ const createTestItems = (amount) => {
         const item = createItem();
         player.inv.push(item);
     }
-
 }
 
 
@@ -929,6 +972,7 @@ const createEquipmentSlots = () => {
 
         const mid = document.createElement('div');
         mid.classList.add('mid');
+        mid.append(slotLabel);
 
         const imageWrapper = document.createElement('div');
         imageWrapper.classList.add('image-wrapper');
@@ -943,7 +987,7 @@ const createEquipmentSlots = () => {
         image.setAttribute('alt', 'equipment slot');
 
         imageCon.append(image);
-        imageWrapper.append(slotLabel);
+     
         imageWrapper.append(imageCon);
 
     
@@ -1047,8 +1091,11 @@ const clearInvSlot = i => {
 const sellItem = i => {
     // i is index in player inv
     const item = player.inv[i];
-    const sellValue = item.sellValue;
-    addGold(sellValue);
+    let sellValue = item.sellValue;
+    sellValue += sellValue * player.goldFind;
+    log(sellValue)
+
+    addGold( Math.floor(sellValue) );
     player.inv.splice(i, 1);
     clearInvSlot(i);
     clearInvSelection();
@@ -1192,7 +1239,9 @@ const setEquippedItemsStyle = () => {
             for (const eff of item.effects) {
                 const effElem = document.createElement('div');
                 effElem.classList.add('effect');
-                let text = `• ${eff.text}`;
+
+                const symbol = '◆'; // •
+                let text = `${symbol} ${eff.text}`;
                 effElem.innerText = text;
                 effectsCon.append(effElem);
             }
@@ -1229,6 +1278,9 @@ const clearEquipmentSlot = (slot, slotName) => {
 const setPlayerStats = () => {
     let bonusDamage = 0;
     let typeBonusDamage = 0;
+    let critChanceBonus = 0;
+    let critMultiplierBonus = 0;
+    let goldFind = 0;
 
     const slotNames = Object.getOwnPropertyNames(player.equipment);
 
@@ -1249,7 +1301,20 @@ const setPlayerStats = () => {
                     if (eff.type === player.equipment.weapon.type) {
                         typeBonusDamage += eff.value;
                     }
-               
+                }
+
+                if (eff.name === 'CritChance') {
+                    critChanceBonus += eff.value;
+                }
+
+                if (eff.name === 'CritDamage') {
+                    // incoming value is percent, eg +5% crit damage
+                    critMultiplierBonus += eff.value / 100;
+                }
+
+                if (eff.name === 'GoldFind') {
+                    // incoming value is percent
+                    goldFind += eff.value / 100;
                 }
 
             }
@@ -1266,19 +1331,24 @@ const setPlayerStats = () => {
     player.damage.bonus = bonusDamage;
     player.damage.typeBonus = typeBonusDamage;
 
+    player.crit.chance = critChanceBonus;
+    player.crit.multiplier = critMultiplierBonus + player.crit.baseMultiplier;
+
+    player.goldFind = goldFind;
 
 
     const damageElem = document.querySelector('#player-stats-container .damage');
     const critChanceElem = document.querySelector('#player-stats-container .crit-chance');
     const critDamageElem = document.querySelector('#player-stats-container .crit-damage');
+    const goldFindElem = document.querySelector('#player-stats-container .gold-find');
 
     const totalDamage = player.damage.base+player.damage.bonus+player.damage.typeBonus;
     damageElem.innerText = totalDamage;
 
-
-
-    critChanceElem.innerText = player.crit.chance;
+    critChanceElem.innerText = `${player.crit.chance}%`;
     critDamageElem.innerText = `${player.crit.multiplier*100}%` ;
+
+    goldFindElem.innerText = `${Math.floor(player.goldFind*100)}%` ;
 
 }
 

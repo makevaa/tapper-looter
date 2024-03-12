@@ -13,6 +13,7 @@
 
     <link media='screen' href='css/modal.css' type='text/css' rel='stylesheet' /> 
     <link media='screen' href='css/menu.css' type='text/css' rel='stylesheet' /> 
+    <link media='screen' href='css/canvas.css' type='text/css' rel='stylesheet' /> 			
 
     <link media='screen' href='css/debug.css' type='text/css' rel='stylesheet' /> 			
 
@@ -46,6 +47,7 @@
         <div class='modal-window help'>
           <div class='title'>Help</div>
           <div class='content'>
+            <h3>Gameplay</h3>
             <p>
             Tap enemy to defeat it and loot items. You can inspect looted items in inventory, and sell or equip them. You can't loot more items if inventory is full. 
             </p>
@@ -53,21 +55,45 @@
               To un-equip item, tap the item icon in equipment view.
             </p>
 
-        
+            <h3>Item rarity</h3>
             Item rarity tiering is color coded as follows:<br>
-            • <span style="color:#9d9d9d;">Weak</span><br>
-            • <span style="color:#e6e6e6;">Common</span><br>
-            • <span style="color:#1eff00;">Uncommon</span><br>
-            • <span style="color:#0073e6;">Rare</span><br>
-            • <span style="color:#a335ee;">Epic</span><br>
-            • <span style="color:#ff8000;">Legendary</span><br>
+            <ul>
+              <li><span style="color:#9d9d9d;">Weak</span></li>
+              <li><span style="color:#e6e6e6;">Common</span></li>
+              <li><span style="color:#1eff00;">Uncommon</span></li>
+              <li><span style="color:#0073e6;">Rare</span></li>
+              <li><span style="color:#a335ee;">Epic</span></li>
+              <li><span style="color:#ff8000;">Legendary</span></li>
+            </ul>
+ 
+         
 
             <p>Higher tier items have higher maximum rolls so they can roll higher stats than lower tiers, but not always. There are no unique named items in the game (maybe in the future).</p>
 
-            <p>There is no goal in the game.</p>
+            <h3>Item types</h3>
+            There are 3 kinds of items in the game:
+            <ul>
+              <li>Weapons</li>
+              <li>Amulets</li>
+              <li>Talisman</li>
+            </ul>
+            The player has 3 equipment slots, one for each item type.<br>
+            Weapons are divided further into types:
 
-        
-         
+       
+            <ul>
+              <li>Sword</li>
+              <li>Axe</li>
+              <li>Hammer</li>
+              <li>Mace</li>
+              <li>Bow</li>
+              <li>Staff</li>
+              <li>Spear</li>
+       
+            </ul>
+            
+            <h3>Goal of the game</h3>
+            <p>There is no goal in the game.</p>
           </div>
           <div class='button' onclick=hideModal()>Close</div>
         </div>
@@ -75,11 +101,24 @@
         <div class='modal-window about'>
           <div class='title'>About</div>
           <div class='content'>
-            This is a client side JavaScript tapper & item looting game.
-            <br>
-            <br>
-            <br>
-            You can contact me (the developer) via email: markus.vaananen(at)gmail.com
+            <p>
+              TapperLooter<br>
+              v1.0.1
+            </p>
+            <p>
+              TapperLooter is a client-side single-player tapper & item looting game made with Javascript. Inspired by Diablo 2 & 3. <br>
+            </p>
+
+            <p>
+              Graphics are from Open Game Art, I will be adding credits for the assets used here. Enemy images are generated with Craiyon.
+            </p>
+
+            <p>
+              You can contact me (the developer) via email: markus.vaananen(at)gmail.com
+            </p>
+       
+
+  
   
           </div>
           <div class='button' onclick=hideModal()>Close</div>
@@ -123,6 +162,8 @@
           <div id='menu-button-container'>
             <div id='menu-button'>Menu</div>
           </div>
+
+          <canvas id='canvas'></canvas>
      
 
          <div id='enemy-container'>
@@ -150,40 +191,27 @@
          </div>
 
 
-         <div id='loot-container' class='hidden'>
-
-          <div id='loot-name-container'>
-            <div id='loot-name'></div>
-          </div>
-       
-          <div class='loot-item'>
-
-              <div class='outer-wrap'>
-                <div class='inner-wrap pixelated'>
-                  <!--<div class='front image' style='background-image: url('img/item/axe.png'); filter: drop-shadow(black 0px 0px 0px);'></div>
-                  <div class='back image' style='background-image: url('img/item/axe.png'); filter: drop-shadow(black 0px 0px 0px);'></div>
-                  -->
-                  <div class='image'></div>
-                  <div class='image'></div>
-
-                  <div class='item-normal-glow-container'>
-                    <div class='item-normal-glow' style='box-shadow: rgba(153, 51, 255, 0.8) 0px 0px 50px 20px;'></div>	
-                  </div>				
-                </div>
-              </div>
-              <div class='item-bottom-shadow-container'>
-                <div class='item-bottom-shadow'></div>
-              </div>					
+          <div id='loot-container' class='hidden'>
+            <div id='loot-name-container'><div id='loot-name'></div></div>
         
-          </div>
+              <div class='loot-item'>
+                <div class='outer-wrap'>
 
+                  <div class='inner-wrap pixelated'>
+                    <div class='image'></div>
+                    <div class='image'></div>
+
+                    <div class='item-normal-glow-container'>
+                      <div class='item-normal-glow' style='box-shadow: rgba(153, 51, 255, 0.8) 0px 0px 50px 20px;'></div>	
+                    </div>	
+                  </div>
+                </div>
+
+                <div class='item-bottom-shadow-container'><div class='item-bottom-shadow'></div></div>					
+
+              </div>
          </div>
-         
-<!--
-          <div class='debug'>
-            <div class='create-monster'>createEnemy()</div>
-          </div>
--->
+
         </div>
 
 
@@ -282,7 +310,7 @@
 
 
 
-        <div class='view hidden'>
+        <div class='view stats hidden'>
           
           <div id='equipment-container'></div>
 
@@ -302,6 +330,13 @@
               <div class='label'>Crit damage</div>
               <div class='value crit-damage'>-1</div>
             </div>
+
+            
+            <div class='row'>
+              <div class='label'>Gold increase</div>
+              <div class='value gold-find'>-1</div>
+            </div>
+
           </div>
         
         </div>

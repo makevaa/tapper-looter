@@ -11,8 +11,9 @@
 	justify-content: center;
 	align-items: center;
 
-    xtransition:all 0.2s;
+    transition:all 0.2s;
     xtransition-timing-function: ease-in;
+
 }
 
 #menu-container.hidden {
@@ -34,21 +35,21 @@
 
 
     
-    ximage-rendering:pixelated;
-    xborder-style: solid;
-	xborder-image-source: url('../img/border_big_silver.png');
-	xborder-image-slice: 150;
-	xborder-image-width: 25;
-	xborder-image-outset: 0;
-	xborder-image-repeat: round;
+
+    border-style: solid;
+	border-image-source: url('../img/border.png');
+	border-image-slice: 150;
+	border-image-width: 3em;
+	border-image-outset: 0;
+	border-image-repeat: round;
+    box-shadow: inset 0px 0px 10px 10px rgba(0,0,0, 0.8);
+    border-radius:5em 5em 4em 4em;
 
     box-shadow: 0px 0px 30px 10px rgba(0,0,0, 0.5),
                 10px 10px 10px 0px rgba(0,0,0, 0.5),
                 inset 0px 0px 10px 10px rgba(0,0,0, 0.5);
     
-    xbackground-image:url('../img/gran1b.jpg');
-    xbackground-position: center;
-    xbackground-size:contain;
+
 }
 
 #title-container {
@@ -115,7 +116,7 @@
 
 
 
-#menu  .button {
+#menu > .button {
     xborder:1px solid yellow;
     xaspect-ratio:3/2;
  
