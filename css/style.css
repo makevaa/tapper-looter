@@ -5,6 +5,11 @@
 	zoom: reset;
 }
 
+a:link{ color:#6969ff; font-weight:bold;} 
+a:visited{ color:#6969ff } 
+a:hover{ color:#6969ff; } 
+a:focus{ color: #16e980; } 
+a:active{ color:#d4d365; } 
 
 html{
 

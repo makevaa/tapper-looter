@@ -118,4 +118,74 @@
     font-size:1.9em;
 }
 
+
+
+
+
+
+/* Game name, version and image on "About" page */
+.modal-window.about > .content > .header  {
+    xborder:1px solid grey;
+    display:flex;
+    justify-content: center;
+	align-items: center;
+    height:120px;
+}
+
+.modal-window.about > .content > .header > .info-container  {
+    xborder:1px solid grey;
+    width:50%;
+    xheight:100%;
+    xpadding-right:10px;
+
+    text-align: right;
+
+    display:flex;
+    flex-direction:column;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.modal-window.about > .content > .header > .info-container > .info {
+
+}
+
+.modal-window.about > .content > .header > .info-container > .info > div  {
+    xborder:1px solid grey;
+    xdisplay:inline-block;
+    margin-bottom:5px;
+    font-family:consolas,monospace;
+}
+
+.about-name  {
+    color:#ff8000;
+}
+
+.about-version  {
+    color:#e6e6e6;
+}
+
+.about-date  {
+    color:#9d9d9d;
+}
+
+
+
+.modal-window.about > .content > .header > .image {
+    xborder:1px solid grey;
+    width:50%;
+    display:flex;
+    justify-content: left;
+	align-items: center;
+}
+
+.modal-window.about > .content > .header > .image > img {
+    xborder:1px solid grey;
+    height:120px;
+    
+
+	
+}
+    
     

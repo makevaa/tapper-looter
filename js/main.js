@@ -116,8 +116,8 @@ const itemQuality = [
     // gray, white, green, blue, purple, orange
     {name:'Weak', color:'#9d9d9d'}, 
     {name:'Common', color:'#e6e6e6'}, 
-    {name:'Uncommon', color:'#1eff00'}, 
-    {name:'Rare', color:'#0073e6'},  // wowBlue: 0070dd
+    {name:'Uncommon', color:'#0073e6'}, // green 1eff00
+    {name:'Rare', color:'#1eff00'},  // wowBlue: 0070dd, other blue 0073e6
     {name:'Epic', color:'#a335ee'}, 
     {name:'Legendary', color:'#ff8000'}, 
 ]
@@ -465,21 +465,20 @@ const takeLoot = () => {
     setItemToSlot(item, invSlots[player.inv.length-1], player.inv.length-1);
 
 
-
-
-
     // Change inv tab icon to open chest (item "goes" to chest)
     invIcon.setAttribute('src', 'img/chest_open.png');
 
     
     const itemPos = lootItemImage.getBoundingClientRect();
+    //const itemPos = lootItemContainer.getBoundingClientRect();
+    
     const invPos = invIcon.getBoundingClientRect();
 
 
     let moveAmount = (invPos.y - itemPos.y) * 0.7;
 
-    lootItemImage.style.transform = `translateY(${moveAmount}px) scale(0)`;
-    lootItemNameContainer.style.transform = `translateY(${moveAmount}px) scale(0)`;
+    lootItemImage.style.transform = `translateY(${moveAmount}px) scale(0.2)`;
+    lootItemNameContainer.style.transform = `translateY(${invPos.y - itemPos.y}px) scale(0)`;
     
     let animDuration = 200; //ms
 
