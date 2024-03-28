@@ -12,13 +12,13 @@
 
     background-color: rgb(30, 30, 30);
     border-style: solid;
-	border-image-source: url('../img/border.png');
+	border-image-source: url('../img/border_simple.png');
 	border-image-slice: 200;
 	border-image-width: 3em;
 	border-image-outset: 0;
 	border-image-repeat: round;
     box-shadow: inset 0px 0px 10px 10px rgba(0,0,0, 0.8);
-    border-radius:5em 5em 4em 4em;
+    xborder-radius:5em 5em 4em 4em;
 }
 
 #bottom-bar > .tab {
@@ -59,7 +59,9 @@
     color:#ffffff;
     text-shadow: 0px 0px 10px orange, 0px 0px 5px rgb(160, 160, 160);
     
-    transition: all 0.07s;
+    xtransition: all 0.07s;
+
+    filter: drop-shadow(0px 0px 5px rgba(0, 0, 0, 0.9));
 }
 
 
@@ -78,22 +80,31 @@
     xborder:1px solid grey;
     xfilter: drop-shadow(0px 0px 2px rgba(255, 255, 255, 0.9));
     filter: drop-shadow(0px 0px 3px rgba(0, 0, 0, 1)) 
-            drop-shadow(0px 0px 5px rgba(0, 0, 0, 1)) ;
+            drop-shadow(0px 0px 5px rgba(0, 0, 0, 1))  sepia(100%) contrast(100%) brightness(100%);
     aspect-ratio:1/1;
-    height:50%;
+    height:40%;
     ximage-rendering: pixelated;
     transition: all 0.1s;
     border-radius:5px;
+    opacity: 0.7;
 }
 
 #bottom-bar > .tab.selected > img {
     xfilter: drop-shadow(0px 0px 3px rgba(255, 255, 255, 1));
+    xfilter:none;
+    xopacity:1;
+}
 
+#bottom-bar > .tab.selected > img {
+    xfilter: drop-shadow(0px 0px 3px rgba(255, 255, 255, 1));
 }
 
 #bottom-bar > .tab.inv > img.full {
-    transform: translateY(-10px);
+    xtransform: translateY(-10px);
     filter:none;
+    xfilter: saturate(200%) brightness(0.5);
+    transform: scale(1.5);
+
     xbackground-color:rgb(149, 0, 0);
-    background-color:rgba(255, 255, 255, 0.5);
+    xbackground-color:rgba(255, 255, 255, 0.5);
 } 

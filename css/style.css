@@ -3,6 +3,7 @@
 	-moz-box-sizing: border-box; 
 	box-sizing: border-box;
 	zoom: reset;
+    touch-action: manipulation;
 }
 
 a:link{ color:#6969ff; font-weight:bold;} 
@@ -11,8 +12,15 @@ a:hover{ color:#6969ff; }
 a:focus{ color: #16e980; } 
 a:active{ color:#d4d365; } 
 
-html{
+/* Disable double-click to zoom on links, input fields
+   and buttons to improve responsiveness */
+a, input, button, .button
+{
+    touch-action: manipulation;
+}
 
+html{
+    touch-action: manipulation!important;
 }
 	
 body{
@@ -41,7 +49,7 @@ body{
     position:relative;
     width:100%;
     height:100%;
-    xmax-width:800px;
+    xmax-width:400px;
     margin:auto;
 
     display:flex;
@@ -63,7 +71,7 @@ body{
 	border-image-outset: 0;
 	border-image-repeat: round;
     box-shadow: inset 0px 0px 10px 10px rgba(0,0,0, 0.8);
-    border-radius:5em 5em 4em 4em;
+    border-radius:4em 4em 4em 4em;
 
     z-index: 1;
 }
@@ -86,7 +94,14 @@ body{
     display:flex;
     flex-direction: column;
     justify-content: center;
+
+    background-image: url('../img/gran.jpg');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-size: 100% 100%;
 }
+
 
 .view.combat {
     xbackground-image: url('/img/brickwall.png');
@@ -99,234 +114,6 @@ body{
     xborder-bottom:10px solid red;
 } 
 
-
-
-
-
-#enemy-container {
-    xborder:1px solid lime;
-    height:100%;
-    display:flex;
-    flex-direction: column;
-
-    align-items: center;
-    justify-content: center;
-}
-
-#enemy-name-container {
-    xborder:1px solid orange;
-    text-align: center;
-    height:20%;
-    xmargin-top:40px;
-    padding:0px 20px 0px 20px;
-    padding:20px;
-    display:flex;
-
-    align-items: end;
-    justify-content: center;
-}
-
-#enemy-name{
-    xborder:1px solid orange;
-    font-size:1.7em;
-    font-family: Georgia, serif;
-    color:rgb(236, 187, 139);
-    text-shadow: 0px 0px 5px rgba(0, 0, 0, 0.99),
-                 2px 2px 0px rgba(0, 0, 0, 0.99);
-
-  
-
-}
-
-#enemy-image-container {
-    border:3px solid rgb(141, 91, 0);
-    border-radius:4px;
-    xtext-align: center;
-    xwidth:100%;
-
-    height:50%;
-    max-width:70%;
-    aspect-ratio: 1/1;
-
-
-    display:flex;
-    justify-content: center;
-    margin-bottom:10px;
-}
-
-
-#enemy-image {
-    border: 5px solid rgb(0, 0, 0);
-    border-radius:5px;
-    xborder-style: outset;
-    box-shadow: 5px 5px 5px 0px rgba(0, 0, 0, 0.5),
-                inset 0px 0px 5px 5px rgba(0, 0, 0, 0.7);
-
-    xaspect-ratio: 1/1;
-    width:100%;
-    height:100%;
-
-    background-position: center;
-    background-size: contain;
-    background-repeat: no-repeat;
-    ximage-rendering: pixelated;
-
-    border-style: solid;
-    background-color:black;
-	border-image-source: url('../img/border_red.png');
-	border-image-slice: 150;
-	border-image-width: 3em;
-	border-image-outset: 0;
-	border-image-repeat: round;
-    box-shadow: inset 0px 0px 10px 10px rgba(0,0,0, 0.8),
-                5px 5px 5px 0px rgba(0, 0, 0, 0.5),
-                0px 0px 10px 0px rgba(0, 0, 0, 0.8);
-    
-    xborder-radius:3em ;
-}
-
-
-#enemy-image.damaged, #enemy-image-container.damaged {
-    filter:brightness(1) saturate(1) contrast(0.7);
-    xfilter:brightness(0.6) saturate(1) contrast(0.8);
-    transform: translateY(-5px);
-}
-
-
-#enemy-hp-bar-container {
-    xborder:1px solid black;
-    border-radius:5px;
-    position:relative;
-    overflow:hidden;
-    width: 70%;
-    height: 2em;
-    margin-top:10px;
-    background-color:rgba(0, 0, 0, 0.5);
-    box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.5), 3px 3px 3px 0px rgba(0, 0, 0, 0.5);
-}
-
-#enemy-hp-bar-container > .border-layer {
-    position:absolute;
-    z-index:1;
-    width:100%;
-    height:100%;
-    border-style: solid;
-    xbackground-color:black;
-	border-image-source: url('../img/border_red.png');
-	border-image-slice: 90;
-	border-image-width: 20em;
-	border-image-outset: 0;
-	border-image-repeat: round;
-    
-    box-shadow: inset 0px 0px 5px 2px rgba(0,0,0, 0.8),
-                5px 5px 5px 0px rgba(0, 0, 0, 0.8),
-                0px 0px 10px 0px rgba(0, 0, 0, 0.8);
-                
-}
-
-#enemy-hp-bar-container.damaged {
-    xfilter:brightness(2) saturate(1) contrast(1);
-    xtransform: translateY(-5px);
-}
-
-#enemy-hp-bar-container > .bar {
-    position:absolute;
-    width: 100%;
-    height: 100%;
-    transition: width 0.1s;
-    xborder-radius:100px;;
-}
-
-#enemy-hp-bar-container > .bar.main {
- 
-    background-color:rgb(118, 0, 0);
-}
-
-#enemy-hp-bar-container > .bar.bg {
-    transition: width 0.5s;
-    xtransition-delay: 100ms;
-    background-color:rgb(118, 110, 0);
-}
-
-#enemy-hp-bar-container > .hp-container {
-    xborder:1px solid grey;
-    position:absolute;
-    width: 100%;
-    height: 100%;
-
-    font-family: consolas, monospace;
-    color:rgb(196, 196, 196);
-
-    font-size:1em;
-    font-family: Georgia, serif;
-	text-transform: uppercase;
-    color:#ffffff;
-    xtext-shadow: 0px 0px 10px orange, 0px 0px 5px rgb(160, 160, 160);
-
-
-    display:flex;
-    flex-direction: row;
-    align-items: center;
-    xpadding-left:10px;
-}
-
-#enemy-hp-bar-container > .hp-container > .current {
-    xborder:1px solid grey;
-    width:50px;
-    text-align: right;
-}
-
-#menu-button-container {
-    xborder:1px solid red;
-    position:absolute;
-    top:0;
-    width:100%;
-    height:10%;
-    padding:5px;
-    pointer-events: none;
-
-    display:flex;
-
-    justify-content: center;
-    xjustify-items: right;
-    xalign-items: right;
-    xalign-content:right;
-}
-
-#menu-button {
-    left:0;
-    width:40%;
-    height:100%;
-
-    xmargin: 10px 40px 0px 0px;
-    margin-top:5px;
-    pointer-events: auto;
-
-
-    display:flex;
-    justify-content: center;
-    align-items: center;
-
-
-
-    background-image: url('../img/button.png');
-    
-  
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: 100% 100%;
-
-    text-align: center;
-    font-size:1em;
-    font-family: Georgia, serif;
-	text-transform: uppercase;
-    color:#ffffff;
-    text-shadow: 0px 0px 10px orange, 0px 0px 5px rgb(160, 160, 160);
-}
-
-#menu-button:active {
-    background-image: url('../img/button_dark.png');
-} 
 
 
 

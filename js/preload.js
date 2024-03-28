@@ -1,22 +1,26 @@
 const imagesToPreload = [
+    'img/anim/explosion1.png',
+    'img/anim/hit_ring.png',
+    'img/anim/hit_ring_red.png',
     'img/border.png',
+    'img/border_simple.png',
     'img/border_red.png',
-    'img/chest.png',
-    'img/chest_open.png',
-    'img/helm.png',
     'img/button.png',
     'img/button_dark.png',
     'img/button_fat.png',
     'img/button_fat_dark.png',
+    'img/chest.png',
+    'img/chest_open.png',
+    'img/chest_full.png',
+    'img/empty_slot_amulet.png',
+    'img/empty_slot_artifact.png',
+    'img/empty_slot_weapon.png',
+    'img/gold_coins.png',
+    'img/helm.png',
     'img/swords_crossed.png',
-    'img/anim/explosion1.png',
-    'img/anim/hit_ring.png',
-
-
-
-
-
-
+    'img/transp.png',
+    'img/gran.jpg',
+    'img/map_pergament_small.png',
 ]
 
 const preloadImages = srcs => {

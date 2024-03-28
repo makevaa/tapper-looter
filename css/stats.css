@@ -4,14 +4,16 @@
 #view-container > .view.stats {  
     xborder:1px solid red;
     xposition:relative;
+    height:100%;
+    overflow: scroll;
+
     display:flex;
     flex-direction: column;
-    xjustify-content:baseline;
+    xjustify-content:start;
     xalign-items: start;
-    xalign-content: center;
+    xalign-content: start;
     justify-content: start;
-    height:100%;
-    overflow-y: scroll;
+  
 }
 
 
@@ -21,7 +23,7 @@
     width:100%;
     height:75%;
     xpadding:0px 10px 0px 10px;
-    padding-top:20px;
+    padding-top: 5px;
 
     display:flex;
     flex-direction:column;
@@ -34,7 +36,7 @@
 #equipment-container > .slot {
     xborder: 2px solid rgb(0, 0, 0);
     xborder-radius: 5px;
-    border-bottom:2px solid black;
+    xborder-bottom:2px solid black;
     background-color:rgba(0,0,0,0.6);
     xbox-shadow:  rgba(0, 0, 0, 0.7) 3px 3px 5px 0px;
 
@@ -53,18 +55,25 @@
     flex-direction:column;
 
     overflow:scroll;
+
     
+    border-style: solid;
+	border-image: url('../img/border_simple.png');
+	border-image-slice: 150;
+	border-image-width: 4em;
+	border-image-outset: 3;
+	border-image-repeat: stretch;    
 }
 
 #equipment-container > .slot > .top-row {
-    xborder:1px solid grey;
+    xborder:1px solid red;
     width:100%;
     height:2em;
     xpadding-left:10px;
     padding: 0px 10px 0px 30px;
     display:flex;
     align-items:center;
-    justify-content: space-between;
+    xjustify-content: space-between;
     
 }
 
@@ -88,7 +97,7 @@
     display:flex;
     xjustify-content: center;
     align-items: left;
-    flex: 1;
+    flex:1;
 }
 
 #equipment-container > .slot > .mid > .label {
@@ -98,15 +107,21 @@
     xwidth: 3em;
     height:100%;
     font-size:1em;
-    text-align:center;
+    xtext-align:center;
+
+    display:flex;
+    justify-content: center;
+    align-items: center;
+
     xpadding:5px 5px 5px 5px;
-    padding:5px;
+    xpadding:5px;
     letter-spacing: -3px;
+    flex:5%;
 
-    writing-mode: vertical-rl;
+    writing-mode: vertical-lr;
     text-orientation: upright;
-    xtransform: rotate(-180deg);
 
+    xtransform: rotate(-180deg);
     xwidth:100%;
     xheight:2em;
 }
@@ -115,60 +130,35 @@
 /* the area where the image is */
 #equipment-container > .slot > .mid > .image-wrapper {
     border:2px solid rgba(0, 0, 0, 0.0); /* padding hack, works decent */
-    xheight:100%;
-    xmargin-top:5px;
-    padding:10px;
-  
-    width:15%;
-    max-width:100px;
-    max-height:100px;
-    xheight:100%;
-    xaspect-ratio:1/1;
+    xbackground-color:red;
 
-    xoverflow:hidden;
-    xheight:4em;
-    xheight:100%;
-    xwidth:100%;
-    xflex:1em;
- 
-    xpointer-events: none;
-    xposition:relative;
-
-    display:flex;
-    xflex-direction:row;
+    xpadding:10px;
+    padding-left:5px;
+    flex:15%;
+    display:inline-flex;
     justify-content: center;
-    xalign-items: center;
+    align-items: center;
 }
-
-
 
  
 
 #equipment-container > .slot > .mid > .image-wrapper > .image-container {
     xborder:1px solid green!important;
     xpointer-events: none;
-    xwidth:100%;
-    xheight:100%;
-    xwidth:100%;
+    position:relative;
+    overflow:hidden;
 
-    height:100%;
-    xheight:auto;
+    width: 4em;
+    height:4em;
 
     aspect-ratio: 1/1;
- 
 
     background-color: #0f151b;
-    xdisplay:flex;
-
     border-radius: 5px;
     border: 2px solid black;
-    box-shadow: 0px 0px 0px 1px rgb(100, 100, 100), 0px 0px 0px 4px rgba(0, 0, 0, 1), inset 0px 0px 5px 5px rgba(0,0,0,0.5), /* vignette */ 0px 0px 3px 3px rgba(0, 0, 0, 0.5);
-    
-    border-radius:5px;
-
+    xbox-shadow: 0px 0px 0px 1px rgb(100, 100, 100), 0px 0px 0px 4px rgba(0, 0, 0, 1), inset 0px 0px 5px 5px rgba(0,0,0,0.5), 0px 0px 5px 5px rgba(250, 0, 0, 0.99);
     
     display:flex;
-    flex-direction:row;
     justify-content: center;
     align-items: center;
 }
@@ -177,22 +167,40 @@
     pointer-events: none;
     border-radius:5px;
     width:90%;
+    xdisplay:inline-flex;
     xheight:100%;
 
-    xaspect-ratio: 1/1;
+    aspect-ratio: 1/1;
 }
 
 #equipment-container > .slot > .mid > .effects {
     xborder:1px solid red;
-    pointer-events: none;
+
+    xborder-style:solid;
+    xborder-width: 1px;
+    xborder: 1px 5px 1px 1px;
+
+
+    xpointer-events: none;
     xwidth:100%;
-    flex: 1;
+    xflex: 1;
     height:100%;
+    margin-left:15px;
     xborder-radius:5px;
-    color:rgb(202, 136, 50);
+    xcolor:rgb(202, 136, 50);
     color: #6969ff;
     xcolor:grey;
-    padding: 0px 10px 0px 20px;
+    padding: 0px 10px 0px 0px;
+    overflow-y: scroll;
+    flex:100%;
+    xfont-family: consolas, monospace;
+
+    display:flex;
+    flex-direction:column;
+    justify-content: center;
+    xalign-content: start;
+    xalign-items: center;
+
 }
 
 
@@ -202,10 +210,12 @@
     xborder:1px solid red;
     border-radius:5px;
     width:90%;
-    height:25%;
-    padding:10px;
+    xheight:20%;
+    padding:5px;
+    padding-bottom: 10px;
     font-family:consolas,monospace;
     color:grey;
+    color:rgb(169, 169, 169);
     background-color:rgba(0, 0, 0, 0.5);
     margin: 5px auto 0px auto;
 
@@ -214,12 +224,17 @@
     xjustify-content: start;
     xalign-content: start;
     align-items: center;
+
+    xflex: 20%;
+
 }
 
 #player-stats-container > .row {
     xborder:1px solid grey;
     width:100%;
     display:flex;
+
+
 }
 
 #player-stats-container > .row > div {
@@ -231,4 +246,5 @@
     text-align:right;
     padding-right:5px;
     color: #928a70;
+    
 }

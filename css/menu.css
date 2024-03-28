@@ -1,3 +1,6 @@
+
+
+
 #menu-container {
     xborder:1px solid red;
     position:absolute;
@@ -5,15 +8,16 @@
     opacity:0;
     width:100vw;
     height:100vh;
-    z-index:2;
+    z-index:4;
 
     display:flex;
 	justify-content: center;
 	align-items: center;
 
-    transition:all 0.2s;
+    transition: opacity 0.2s;
     xtransition-timing-function: ease-in;
-
+    will-change: opacity;
+    
 }
 
 #menu-container.hidden {
@@ -26,6 +30,7 @@
     width:100%;
     height:100%;
     background:rgb(23, 23, 23);
+
     padding:10px;
 
     display:flex;
@@ -48,6 +53,8 @@
     box-shadow: 0px 0px 30px 10px rgba(0,0,0, 0.5),
                 10px 10px 10px 0px rgba(0,0,0, 0.5),
                 inset 0px 0px 10px 10px rgba(0,0,0, 0.5);
+
+                /*inset 0px -40px 40px 0px rgba(255, 98, 0, 0.5);*/
     
 
 }
@@ -148,9 +155,11 @@
     color:#ffffff;
     text-shadow: 0px 0px 10px orange, 0px 0px 5px rgb(160, 160, 160);
     
-    transition: all 0.07s;
+    xtransition: all 0.07s;
 
     xbox-shadow: 0px 0px 10px 10px rgba(0,0,0,0.99);
+    touch-action: manipulation;
+    filter: drop-shadow(5px 5px 5px rgba(0, 0, 0, 0.9));
     
 }
 
@@ -158,6 +167,7 @@
     width:200px;
     height:57px;
     font-size:1.5em;
+ 
 }
 
 

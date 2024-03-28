@@ -18,6 +18,7 @@ const lootItemNormalGlow = document.querySelector('.item-normal-glow');
 const enemyContainer = document.getElementById('enemy-container');
 const enemyNameElem = document.getElementById('enemy-name');
 const enemyImageContainer = document.getElementById('enemy-image-container');
+const enemyDamageOverlay = enemyImageContainer.querySelector('.damage-overlay');
 const enemyImageElem = document.getElementById('enemy-image');
 
 const enemyHpBarContainer = document.getElementById('enemy-hp-bar-container');
@@ -44,6 +45,8 @@ const itemViewerEffectsContainer = document.querySelector('#item-viewer > .name-
 
 //const viewerItemContainer = document.getElementById('loot-container');
 //const viewerItemImage = document.querySelector('.loot-item');
+const itemViewerContainer = document.querySelector('#item-viewer > .image-container');
+
 const itemViewerImage = document.querySelector('#item-viewer > .image-container > .viewer-item');
 
 const itemViewerBottomShadow = document.querySelector('#item-viewer > .image-container > .viewer-item > .item-bottom-shadow-container');
@@ -51,6 +54,10 @@ const itemViewerBottomShadow = document.querySelector('#item-viewer > .image-con
 const viewerItemLayers = document.querySelectorAll('#item-viewer > .image-container > .viewer-item > .outer-wrap > .inner-wrap > .image');
 const viewerItemNormalGlow = document.querySelector('#item-viewer > .image-container > .viewer-item > .outer-wrap > .inner-wrap > .item-normal-glow-container > .item-normal-glow');
 
+const sellSelectedButton = document.getElementById('sell-selected');
+const sellAllButtonButton = document.getElementById('sell-all');
+const lockSelectedButton = document.getElementById('lock-selected');
+const equipButton = document.getElementById('equip-selected');
 
 const playerGoldElem = document.querySelector('#gold-container > .gold-amount-container > .gold-amount');
 const goldAnimContainer = document.querySelector('#gold-container > .gold-anim-container');
@@ -76,6 +83,7 @@ class Player {
         this.inv = [],
         this.gold = 0,
         this.goldFind = 0; 
+        this.magicFind = 0;
         this.kills = 0,
         this.tab = 0,
     
@@ -112,20 +120,33 @@ const addGold = amount => {
 }
 
 
+// WoW style color coding: 
+// gray, white, ,green, blue, purple, orange
+/* 
 const itemQuality = [
-    // gray, white, green, blue, purple, orange
+    {name:'Weak', color:'#9d9d9d'}, //grey
+    {name:'Common', color:'#e6e6e6'}, //white
+    {name:'Uncommon', color:'#1eff00'}, // green 1eff00
+    {name:'Rare', color:'#0073e6'},  // wowBlue: 0070dd, other blue 0073e6
+    {name:'Epic', color:'#a335ee'}, //purple
+    {name:'Legendary', color:'#ff8000'}, //orange
+] */
+
+// Diablo 2 style color coding:  grey, white, blue, yellow, green (set), legendary
+const itemQuality = [
+
     {name:'Weak', color:'#9d9d9d'}, 
-    {name:'Common', color:'#e6e6e6'}, 
-    {name:'Uncommon', color:'#0073e6'}, // green 1eff00
-    {name:'Rare', color:'#1eff00'},  // wowBlue: 0070dd, other blue 0073e6
-    {name:'Epic', color:'#a335ee'}, 
+    {name:'Normal', color:'#e6e6e6'}, 
+    {name:'Magic', color:'#6969ff'}, // green 1eff00
+    {name:'Rare', color:'#FFE400'},  // wowBlue: 0070dd, other blue 0073e6, d2 blue 6969ff
+    {name:'Epic', color:'#1eff00'},  
     {name:'Legendary', color:'#ff8000'}, 
-]
+] 
 
 
 
 class Item {
-    constructor(name, type, isWeapon, imageSrc, qLevel, sellValue, effects) {
+    constructor(name, type, isWeapon, imageSrc, qLevel, sellValue, effects, locked) {
         this.name = name;
         this.type = type;
         this.isWeapon = isWeapon;
@@ -134,6 +155,7 @@ class Item {
         this.sellValue = sellValue;
         this.effects = effects;
         this.looted = false;
+        this.locked = locked;
     }
 }
 
@@ -211,8 +233,10 @@ const createItemEffects = (type, isWeapon, qLevel) => {
 
     let effects = []
 
+    // Damage bonus is added to all weapons
     if (isWeapon) {
         let min = 1;
+        min += qLevel;
         if (qLevel > 1) { min += 10;}
         let max = (qLevel+1)*10 ;
         const eff = new DamageBonus(ranNum(min, max));
@@ -231,7 +255,8 @@ const createItemEffects = (type, isWeapon, qLevel) => {
         
     }
 
-    if (chance(50 + qLevel*3) && !isWeapon) {
+    // Type damage bonus
+    if ( chance(50 + qLevel*3) && !isWeapon ) {
         const min = 1;
         const max = (qLevel+1)*4 ;
 
@@ -241,75 +266,84 @@ const createItemEffects = (type, isWeapon, qLevel) => {
     }
 
 
-    if (chance(50 + qLevel*3)) {
+    // Critical chance
+    if ( chance(50 + qLevel*3) ) {
         const min = 1;
         const max = (qLevel+1)*2 ;
-
-        const forType = selectFrom(weaponTypes);
         const eff = new CritChance(ranNum(min, max));
         effects.push(eff);
     }
 
 
-
-    if (chance(50 + qLevel*3)) {
+    // Critical damage
+    if ( chance(50 + qLevel*3) ) {
         const min = 5;
         const max = (qLevel+1)*5 ;
         const eff = new CritDamage(ranNum(min, max));
         effects.push(eff);
     }
 
-    if (chance(50) && !isWeapon) {
+    // Gold find
+    if ( chance(10) && !isWeapon ) {
         const min = 5;
         const max = (qLevel+1)*5 ;
         const eff = new GoldFind(ranNum(min, max));
         effects.push(eff);
     }
 
-    if (chance(50) && qLevel > 2) {
+    //Increased sell value
+    if ( chance(10) && qLevel > (2-3) ) {
         let min = 5;
         let max = 50;
         let percent = ranNum(min, max);
         const effect = new IncreasedValue(percent);
         effects.push(effect);
     }
+
+
+
+
+
     return effects;
 }
 
 
-const createItem = () => {
+const createItem = (type='random', qLevel='random') => {
     const others = ['amulet', 'artifact'];
     const weapons = [ 'axe', 'bow', 'hammer', 'mace', 'spear', 'staff', 'sword'];
     const types = others.concat(weapons);
-    let type = selectFrom(types);
+
+    if (type==='random') {
+        type = selectFrom(types);
+    }
+
     //type = 'artifact'; //testing names
 
     const isWeapon = weapons.includes(type);
     //log(`${type} isWeapon: ${isWeapon}`)
 
-    
-
     const imageSrc = `img/item/${type}${ranNum(1, itemImageAmounts[type])}.png`
 
-    let qLevel = 0;
-    if (chance(2)) {
-        qLevel = 5;
-    } else if (chance(5)) {
-        qLevel = 4;
-    } else if (chance(10)) {
-        qLevel = 3;
-    } else if (chance(20)) {
-        qLevel = 2;
-    } else if (chance(30)) {
-        qLevel = 1;
-    }      
-
+    if (qLevel === 'random') {
+        qLevel = 0;
+        if (chance(1)) {
+            qLevel = 5;
+        } else if (chance(5)) {
+            qLevel = 4;
+        } else if (chance(10)) {
+            qLevel = 3;
+        } else if (chance(20)) {
+            qLevel = 2;
+        } else if (chance(30)) {
+            qLevel = 1;
+        }      
+    }
 
 
     const nameGenTypes = ['normal', 'normal', 'magic', 'rare', 'legendary', 'mythic'];
     const name = rpgItemGen.createItem(type, nameGenTypes[qLevel]);
     
-    
+
     const valueMin = qLevel * 5 + 1;
     const valueMax = valueMin + valueMin*2;
     let sellValue = ranNum(valueMin, valueMax);
@@ -329,7 +363,7 @@ const createItem = () => {
         }
     }
 
-    const item = new Item(name, type, isWeapon, imageSrc, qLevel, sellValue, effects)
+    const item = new Item(name, type, isWeapon, imageSrc, qLevel, sellValue, effects, false);
     return item;
 }
 
@@ -345,14 +379,21 @@ const createEnemy = () => {
     enemy.image = `img/creature/creature (${imageNum}).jpg`;
  
 
-    enemy.hp.max = settings.enemyMaxHp;
-
-    // Create boss enemy
-    if (chance(5) && player.kills > 50) {
-        enemy.hp.max = settings.enemyMaxHp*10
-    }
-    enemy.hp.current = enemy.hp.max;
+    enemy.hp.max = ranNum(settings.enemy.hp.min, settings.enemy.hp.max);
     enemy.lootItem = createItem();
+
+        // Create boss enemy
+    let boss = false;
+    if (chance(5) && player.kills > 50) { boss=true; }
+
+    
+    if (boss) {
+        enemy.hp.max = enemy.hp.max*10;
+        //const createItem = (type='random', qLevel='random')
+        enemy.lootItem = createItem('random', ranNum(4,5) );
+    }
+
+    enemy.hp.current = enemy.hp.max;
 }
 
 const setEnemyStyle = () => {
@@ -383,8 +424,7 @@ const createLootItemLayers = () => {
 
 
 const setLootItemStyle = () => {
-    //createLootItemLayers();
-
+   
     const rarityColor = itemQuality[enemy.lootItem.qualityLevel].color;
     lootItemNormalGlow.style.boxShadow = `${rarityColor} 0px 0px 50px 20px`; 
 
@@ -421,6 +461,12 @@ const setViewerImage = item => {
     const rarityColor = itemQuality[item.qualityLevel].color;
     viewerItemNormalGlow.style.boxShadow = `${rarityColor} 0px 0px 15px 15px`; 
 
+    let shadow = `inset 0px -40px 40px 0px ${hexToRgbaStr(rarityColor, 0.2)}`;
+    //shadow +=  `inset 0px -30px 30px 0px ${hexToRgbaStr(rarityColor, 0.5)}`;
+
+    itemViewerContainer.style.boxShadow = shadow;
+
+    
     //const imageLayers = document.querySelectorAll('#loot-container > .loot-item > .outer-wrap > .inner-wrap > .image');
     const front = viewerItemLayers[0];
     const back = viewerItemLayers[1];
@@ -441,15 +487,24 @@ const setViewerImage = item => {
 
 const flashInvIcon = () => {
     invIcon.classList.add('full');
+    
     setTimeout(() => {
         invIcon.classList.remove('full');
     }, 100);
 }
 
+const setInvIcon = () => {
+    if (player.inv.length >= player.invSlots) {
+        invIcon.setAttribute('src', 'img/chest_full.png');
+    } else {
+        invIcon.setAttribute('src', 'img/chest.png');
+    }
+}
 
 const takeLoot = () => {
     const item = enemy.lootItem;
     if (item.looted) { return false }
+
     if (player.inv.length >= player.invSlots) {
         // Inv is full, cant loot
         flashInvIcon(); // Move inv tab icon
@@ -459,28 +514,41 @@ const takeLoot = () => {
     item.looted = true;
     //log(`Looted item: ${item.name} `);
 
-        //add item to player inv
+    //add item to player inv
     player.inv.push(item);
 
+
+   
     setItemToSlot(item, invSlots[player.inv.length-1], player.inv.length-1);
 
 
     // Change inv tab icon to open chest (item "goes" to chest)
     invIcon.setAttribute('src', 'img/chest_open.png');
 
-    
+    // Move item to inventory tab icon
     const itemPos = lootItemImage.getBoundingClientRect();
-    //const itemPos = lootItemContainer.getBoundingClientRect();
+    const itemCenter = {
+        x: itemPos.x + itemPos.width/2,
+        y: itemPos.y + itemPos.height/2,
+    }
     
     const invPos = invIcon.getBoundingClientRect();
+    const invCenter = {
+        x: invPos.x + invPos.width/2,
+        y: invPos.y + invPos.height/2,
+    }
 
 
-    let moveAmount = (invPos.y - itemPos.y) * 0.7;
+    let moveY = (invCenter.y - itemCenter.y) * 1;
+    let moveX = (invCenter.x - itemCenter.x) * 1;
 
-    lootItemImage.style.transform = `translateY(${moveAmount}px) scale(0.2)`;
-    lootItemNameContainer.style.transform = `translateY(${invPos.y - itemPos.y}px) scale(0)`;
+    lootItemImage.style.transform = `translateY(${moveY}px) translateX(${moveX}px)  scale(0.2)`;
+    //lootItemNameContainer.style.transform = `translateY(${invPos.y - itemPos.y}px) scale(0)`;
+    lootItemNameContainer.style.transform = `translateY(${moveY}px) translateX(${moveX}px) scale(0)`;
     
     let animDuration = 200; //ms
+
+
 
     setTimeout(() => {
         createEnemy();
@@ -493,15 +561,26 @@ const takeLoot = () => {
         lootItemContainer.classList.add('hidden');
 
         // Restore loot item style
-        lootItemImage.style.transform = 'translateY(0%) scale(1)';
-        lootItemNameContainer.style.transform = 'translateY(0%) scale(1)';
+        lootItemImage.style.transform = 'translateY(0%) translateX(0%) scale(1)';
+        lootItemNameContainer.style.transform = 'translateY(0%) translateX(0%) scale(1)';
 
         // Restore inv tab icon to closed chest
-        invIcon.setAttribute('src', 'img/chest.png');
+        setInvIcon()
         save();
       }, animDuration);
 }
 
+const setCombatView = () => {
+    if (enemy.dead) {
+        enemyContainer.classList.add('hidden');
+        setTimeout(() => {
+            // Show loot elem
+            lootItemContainer.classList.remove('hidden');
+        }, 300);
+    } else {
+        enemyContainer.classList.remove('hidden');
+    }
+}
 
 const attackEnemy = (pos) => {
     // Return early to avoid possibly triggering death multiple times.
@@ -521,11 +600,7 @@ const attackEnemy = (pos) => {
     }
     enemy.hp.current -= dmg;
 
-    let hpLeftPercent = enemy.hp.current/enemy.hp.max*100;
-    enemyHpBarMain.style.width = `${hpLeftPercent}%`;
-    enemyHpBarBg.style.width = `${hpLeftPercent}%`;
 
-    enemyHpCurrent.innerText = enemy.hp.current;
 
 
     if (enemy.hp.current <= 0) {
@@ -536,21 +611,16 @@ const attackEnemy = (pos) => {
         player.kills++;
 
         // Hide enemy elem
-        enemyContainer.classList.add('hidden');
-
-
-        setTimeout(() => {
-            // Show loot elem
-            lootItemContainer.classList.remove('hidden');
-            
-        }, 300);
-
-
-
+      
+        setCombatView();
+     
     } else {
         // Set hp bar or something here, enemy is not dead yet
         enemyImageContainer.classList.add('damaged');
-        enemyHpBarContainer.classList.add('damaged');
+        //enemyHpBarContainer.classList.add('damaged');
+
+        enemyDamageOverlay.classList.remove('hidden');
+
 
         //let attackAnim = animData.impact1;
         //attackAnim = animData.atk2;
@@ -559,10 +629,20 @@ const attackEnemy = (pos) => {
         
         setTimeout(() => {
             enemyImageContainer.classList.remove('damaged');
-            enemyHpBarContainer.classList.remove('damaged');
-        }, 200);
+            enemyDamageOverlay.classList.add('hidden');
+            //enemyHpBarContainer.classList.remove('damaged');
+        }, 100);
         
     }
+
+    
+    let hpLeftPercent = enemy.hp.current/enemy.hp.max*100;
+    enemyHpBarMain.style.width = `${hpLeftPercent}%`;
+    enemyHpBarBg.style.width = `${hpLeftPercent}%`;
+    enemyHpCurrent.innerText = enemy.hp.current;
+
+
+    save();
 
 }
 
@@ -624,28 +704,39 @@ const setListeners = () => {
 
     invGrid.addEventListener('click', e => {
         if (e.target.getAttribute('data-empty') !== "true") {
-            showInItemViewer(e.target)
+            log(e.target)
+            showInItemViewer(e.target);
+         
         } else {
             clearInvSelection();
             clearItemViewer();
         }
     });
 
-    const sellSelected = document.getElementById('sell-selected');
-    sellSelected.addEventListener('click', e => {
+
+    sellSelectedButton.addEventListener('click', e => {
         const slot = document.querySelector('#inv-grid > .slot.selected');
         if (slot !== undefined && slot !== null && slot.getAttribute('data-empty') !== "true") {
             sellItem(slot.getAttribute('data-index'));
+            setInvIcon();
+            save();
         }
     });
 
-    const sellAllButton = document.getElementById('sell-all');
-    sellAllButton.addEventListener('click', e => {
+    
+
+    sellAllButtonButton.addEventListener('click', e => {
         sellAll();
     });
 
-    
-    const equipButton = document.getElementById('equip-selected');
+    lockSelectedButton.addEventListener('click', e => {
+        const slot = document.querySelector('#inv-grid > .slot.selected');
+        if (slot !== undefined && slot !== null && slot.getAttribute('data-empty') !== "true") {
+            //lock this elem
+            lockItem(slot.getAttribute('data-index'));
+        }
+    });
+
     equipButton.addEventListener('click', e => {
         const slot = document.querySelector('#inv-grid > .slot.selected');
         if (slot !== undefined && slot !== null && slot.getAttribute('data-empty') !== "true") {
@@ -670,6 +761,13 @@ const setListeners = () => {
     menuButton.addEventListener('click', e => {
         showMenu(true);
     });
+
+    /*
+    const mapButton = document.getElementById('map-button');
+    mapButton.addEventListener('click', e => {
+        showMap(true);
+    });
+    */
     
     const help = document.querySelector('#menu > .button.help')
     const about = document.querySelector('#menu > .button.about')
@@ -696,6 +794,8 @@ const clearInvSelection = () => {
 
     if (prevSelectionSlot !== null) {
         prevSelectionSlot.classList.remove('selected');
+        
+    itemViewerContainer.style.boxShadow = `inset  0px -30px 30px 0px rgba(0,0,0, 0.5)`;
     }
 }
 
@@ -715,7 +815,7 @@ const showInItemViewer = (elem) => {
     const item = player.inv[itemI];
 
     if(item === undefined) {
-        // not items left in inv
+        // no items left in inv
         // likely because we equipped the only item in inv
         clearItemViewer();
         return false;
@@ -909,7 +1009,8 @@ const animate =  (anim) => {
 
 const createTestItems = (amount) => {
     for (let i=0; i<amount; i++) {
-        const item = createItem();
+        let item = createItem();
+        //item = createItem('artifact', 5);
         player.inv.push(item);
     }
 }
@@ -932,7 +1033,13 @@ const createInvSlots = () => {
         slotItemImage.setAttribute('src', 'img/transp.png');
         slotItemImage.setAttribute('alt', 'inv slot');
 
+        const statusIcon = document.createElement('div');
+        statusIcon.classList.add('status-icon');
+        statusIcon.classList.add('hidden');
+      
+
         slotItem.append(slotItemImage);
+        slotItem.append(statusIcon)
         slotElem.append(slotItem);
         invGrid.append(slotElem);
     }
@@ -1032,14 +1139,19 @@ const setItemToSlot = (item, slotElem, itemIndex) => {
     //slotImageElem.style.backgroundImage = `url('${imageSrc}')`;
     slotImageElem.setAttribute('src', imageSrc);
 
-
     if (qLevel > 1) {
         slotImageElem.style.filter = `drop-shadow(${itemQuality[qLevel].color} 0px 0px 4px)`;
     } else {
         slotImageElem.style.filter = 'none';
     }
 
+    const statusIcon =  slotElem.querySelector(' .item > .status-icon');
 
+    if (item.locked) {
+        statusIcon.classList.remove('hidden');
+    } else {
+        statusIcon.classList.add('hidden');
+    }
 }
 
 const setInvItems = () => {
@@ -1084,15 +1196,57 @@ const clearInvSlot = i => {
 
     const slotImage = slot.querySelector('.item > .image')
     slotImage.setAttribute('src', 'img/transp.png');
+
+    const statusIcon =  slotItem.querySelector('.status-icon');
+    statusIcon.classList.add('hidden');
+    
 }
 
+
+const sellItemAnimation = (i) => {
+    const slot = invSlots[i].getBoundingClientRect();
+    const start = {
+        x: slot.x + slot.width/2,
+        y: slot.y + slot.height/2,
+    }
+
+    const target = playerGoldElem.getBoundingClientRect();
+    const end = {
+        x: target.x + target.width/2,
+        y: target.y + target.height/2,
+    }
+
+    const moveY = Math.floor((end.y - start.y) * 1);
+    const moveX = Math.floor((end.x - start.x) * 1);
+
+    const elem = document.createElement('div');
+    elem.classList.add('animated-gold-icon');
+
+    //elem.style.transitionDelay( `${500 * counter}ms`);
+    //elem.style = `"transitionDelay${500 * counter}ms"`;
+
+    invSlots[i].append(elem);
+    // Short delaye before animation
+    // to have element inside the document
+    // and have style attributes
+    setTimeout(() => {
+        elem.style.transform = `translateY(${moveY}px) translateX(${moveX}px)`;
+     }, 0);
+ 
+
+    setTimeout(() => {
+       elem.remove();
+    }, 500);
+}
 
 const sellItem = i => {
     // i is index in player inv
     const item = player.inv[i];
-    let sellValue = item.sellValue;
-    sellValue += sellValue * player.goldFind;
-    log(sellValue)
+    if (item.locked) {
+        return false
+    }
+
+    const sellValue = item.sellValue * (1+player.goldFind) ;
 
     addGold( Math.floor(sellValue) );
     player.inv.splice(i, 1);
@@ -1100,20 +1254,39 @@ const sellItem = i => {
     clearInvSelection();
     clearItemViewer();
     setInvItems();
+    sellItemAnimation(i);
 }
 
 const sellAll = () => {
-    //log('trying to sell all items')
     invGrid.scrollTop = 0;
+    let totalValue = 0;
+    const lockedItems = []
+
     for (let i=player.inv.length-1; i>=0; i--) {
-       
-        let time = Math.abs(i - player.inv.length) * 1;
-   
-        setTimeout(() => {
-            sellItem(i);
-          }, time);
-   
+        const item = player.inv[i];
+
+        if (!item.locked) {
+            // Item is not locked, sell it
+            totalValue += item.sellValue;
+            player.inv.splice(i, 1);
+            sellItemAnimation(i);
+        } else {
+            lockedItems.push(item);
+        }
     }
+
+    player.inv = []
+    for (let i=0; i<lockedItems.length; i++) {
+        player.inv.push(lockedItems[i])
+    }
+    //reverse, because items were added from the end
+    player.inv.reverse(); 
+
+    clearInvSelection();
+    clearItemViewer();
+    setInvItems();
+    addGold( Math.floor( totalValue * (1+player.goldFind) ) );
+    setInvIcon();
 }
 
 
@@ -1135,7 +1308,23 @@ const runGoldAnim = (amount, add) => {
     setTimeout(() => {
         goldAnimContainer.style.transition = 'opacity 1s';
         goldAnimContainer.style.opacity = 0;
-    }, 100);
+    }, 1000);
+}
+
+
+const lockItem = i => {
+    // i is index in player inv
+    const item = player.inv[i];
+   
+    if (!item.locked) {
+        //lock item
+        item.locked = true;
+    } else {
+        //item already locked, unlock it
+        item.locked = false;
+    }
+    setInvItems();
+    save();
 }
 
 
@@ -1279,6 +1468,7 @@ const setPlayerStats = () => {
     let typeBonusDamage = 0;
     let critChanceBonus = 0;
     let critMultiplierBonus = 0;
+    let magicFind = 0;
     let goldFind = 0;
 
     const slotNames = Object.getOwnPropertyNames(player.equipment);
@@ -1311,6 +1501,11 @@ const setPlayerStats = () => {
                     critMultiplierBonus += eff.value / 100;
                 }
 
+                if (eff.name === 'MagicFind') {
+                    // incoming value is percent
+                    magicFind += eff.value / 100;
+                }
+
                 if (eff.name === 'GoldFind') {
                     // incoming value is percent
                     goldFind += eff.value / 100;
@@ -1318,10 +1513,7 @@ const setPlayerStats = () => {
 
             }
                 
-         
-
-
-
+        
             
         }
     
@@ -1333,35 +1525,46 @@ const setPlayerStats = () => {
     player.crit.chance = critChanceBonus;
     player.crit.multiplier = critMultiplierBonus + player.crit.baseMultiplier;
 
+    player.magicFind = magicFind;
     player.goldFind = goldFind;
 
 
     const damageElem = document.querySelector('#player-stats-container .damage');
     const critChanceElem = document.querySelector('#player-stats-container .crit-chance');
     const critDamageElem = document.querySelector('#player-stats-container .crit-damage');
+    const magicFindElem = document.querySelector('#player-stats-container .magic-find');
     const goldFindElem = document.querySelector('#player-stats-container .gold-find');
 
     const totalDamage = player.damage.base+player.damage.bonus+player.damage.typeBonus;
     damageElem.innerText = totalDamage;
 
-    critChanceElem.innerText = `${player.crit.chance}%`;
-    critDamageElem.innerText = `${player.crit.multiplier*100}%` ;
+    critChanceElem.innerText = `${Math.floor(player.crit.chance)}%`;
+    critDamageElem.innerText = `${Math.floor(player.crit.multiplier*100)}%` ;
 
-    goldFindElem.innerText = `${Math.floor(player.goldFind*100)}%` ;
+    magicFindElem.innerText = `+${Math.floor(player.magicFind*100)}%` ;
+    goldFindElem.innerText = `+${Math.floor(player.goldFind*100)}%` ;
 
 }
 
 const setAnimImages = () => {
     const animNames = Object.getOwnPropertyNames(animData);
-
     for (const animName of animNames) {
         const anim = animData[animName];
         const img = new Image();
         img.src = anim.imageSrc;
         anim.image = img;
     }
+}
 
+const setMap = () => {
+    const w = settings.map.w;
+    const h = settings.map.h;
 
+    const mapElem = document.getElementById('map');
+    mapElem.width = w;
+    mapElem.height = h;
+
+    //map.style.background-image
 }
 
 const initNewGame = () => {
@@ -1369,8 +1572,11 @@ const initNewGame = () => {
     createEnemy();
     setEnemyStyle();
     setLootItemStyle();
+    //setMap();
 
     player = new Player();
+
+    //createTestItems(20); 
 
     setInvItems();
     setPlayerStats();
@@ -1391,26 +1597,29 @@ preloadImages(imagesToPreload).then(function(imgs) {
 
   
 
-    
 
     if ( saveExists() ) {
         // load save
 
         loadSave();
         setLootItemStyle();
+        setCombatView();
+        playerGoldElem.innerText = player.gold;
+
     } else {
         //start new game
         initNewGame()
-        createTestItems(20);  //debug
+        //createTestItems(10);  //debug
     }
 
     setEnemyStyle()
-
+  
   
 
     setInvItems();
     setEquippedItemsStyle();
     setPlayerStats();
+    setInvIcon()
     setListeners();
 
     //const enemyW = enemyImageElem.clientWidth;
@@ -1419,6 +1628,10 @@ preloadImages(imagesToPreload).then(function(imgs) {
     showTabView(player.tab);
 
     save();
+
+    //showMenu(); //debug
+    //showModal('about'); //debug
+   
 
 }, function(errImg) {
     // at least one image failed to load

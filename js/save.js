@@ -76,7 +76,7 @@ const loadSave = () => {
         const item = data.player.inv[i];
         const sellValue = data.invItemSellValues[i]
 
-        const newItem = new Item(item.name, item.type, item.isWeapon, item.imageSrc, item.qualityLevel, sellValue, item.effects);
+        const newItem = new Item(item.name, item.type, item.isWeapon, item.imageSrc, item.qualityLevel, sellValue, item.effects, item.locked);
 
         player.inv[i] = newItem;
     }
@@ -98,9 +98,10 @@ const loadSave = () => {
             data.player.equipment[slotName] = newItem;
             //log(data.player.equipment[slotName])
         }
-
-       
     }   
+
+
+   
 }
 
 const saveExists = () => {

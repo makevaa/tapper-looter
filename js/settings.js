@@ -1,6 +1,17 @@
 const settings = {
     enemyImageAmount: 133,
-    enemyMaxHp: 100,
+
+    enemy: {
+        hp: {
+            min: 100, max: 200
+        }
+    },
+
+    map: {
+        w: 1000,
+        h: 1000
+    },
+
 }
 
 //   const types = ['amulet', 'artifact', 'axe', 'bow', 'hammer', 'mace', 'potion', 'spear', 'staff', 'sword']
@@ -14,5 +25,5 @@ const itemImageAmounts = {
     potion:4,
     spear:13,
     staff:8,
-    sword:11,
+    sword:14,
 }

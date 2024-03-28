@@ -59,6 +59,7 @@ const showModal = targetName => {
     const target = document.querySelector(`#modal-container > .modal-window.${targetName}`);
     
     target.style.visibility = 'visible';
+	//modal.style.opacity = 1;
     modal.style.visibility = 'visible';
     modal.style.opacity = 1;
     //target.style.opacity = 1;
@@ -68,35 +69,34 @@ const showModal = targetName => {
 
 
 const showMenu = (show=true) => {
-    const menu = document.getElementById('menu-container');
-    let visi, opa;
+    const elem = document.getElementById('menu-container');
+
+    if (show) { // Show
+		elem.style.visibility = 'visible';
+		elem.style.opacity = 1;
+    } else { // Hide 
+		elem.style.opacity = 0;
+		setTimeout(() => {
+			elem.style.visibility = 'hidden';
+		}, 200);
+    }
+}
+
+/*
+const showMap = (show=true) => {
+    const elem = document.getElementById('map-container');
 
     if (show) {
-        // Show menu
-        visi = 'visible';
-		opa = 1;
-        //menu.classList.remove('hidden');
+        // Show 
+		elem.style.visibility = 'visible';
+		elem.style.opacity = 1;
 
     } else {
-        // Hide menu
-        visi = 'hidden';
-		opa = 0;
-        //menu.classList.add('hidden');
-    }
-
-	menu.style.visibility = visi;
-	menu.style.opacity = opa;
-
-	/*
-	if (show) {
-		menu.style.visibility = visi;
-		menu.style.opacity = opa;
-	} else {
-		menu.style.opacity = opa;
+        // Hide 
+		elem.style.opacity = 0;
 		setTimeout(() => {
-			menu.style.visibility = visi;
+			elem.style.visibility = 'hidden';
 		}, 200);
-	}
-	*/
-
+    }
 }
+*/
