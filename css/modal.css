@@ -13,6 +13,9 @@
 	align-items: center;
     transition:all 0.2s;
     will-change: opacity;
+
+
+
 }
 
 #modal-container > .modal-window {
@@ -27,7 +30,7 @@
     xtransition:all 0.2s;
    
 
-    background-color:rgb(37, 37, 37);
+    background-color:rgb(21, 21, 21);
     color:grey;
     font-family: Georgia, serif;
     xpadding: 30px 10px 50px 10px;
@@ -68,8 +71,8 @@
     xbackground-color:rgba(0,0,0, 0.5);
 }
 
-.modal-window > .content {
 
+.modal-window > .content {
     padding:20px 20px 20px 20px;
     padding:20px;
 
@@ -89,7 +92,7 @@
     xbackground-color:rgba(0,0,0, 0.5);
     xbox-shadow: 0px 10px 10px 0px rgba(0, 0, 0, 0.5);
 
-    xbox-shadow: inset 0px 0px 10px 10px rgba(0,0,0, 0.8);
+    box-shadow: inset 0px 5px 10px 0px rgba(0,0,0, 0.99);
 
     background: rgb(0, 0, 0, 0.5);
     background: linear-gradient(90deg,
@@ -104,7 +107,7 @@ rgba(0,0,0,0) 100%);
 	border-image-source: url('../img/border.png');
 	border-image-slice: 150;
 	border-image-width: 3em 0em;
-	border-image-outset: 5px;
+	border-image-outset: 2px;
 	border-image-repeat: round;
     xborder: 1px solid red;
 }
@@ -118,23 +121,16 @@ rgba(0,0,0,0) 100%);
 
 .modal-window > .button-container {
     xborder: 1px solid red;
-    xbackground: rgb(0, 0, 0, 0.5);
-    xmargin:auto;
-    xpadding:10px;
-    xmargin:20px 0px 20px 0px;
     width:100%;
-    xheight:30%;
     flex:20%;
     display:flex;
     justify-content: center;
     align-items: center;
-
 }
 
 .modal-window > .button-container > .button {
     text-align:center;
     width:300px;
-    xheight:86px;
     aspect-ratio:300/86;
 
     display:flex;

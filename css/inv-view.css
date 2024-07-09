@@ -5,29 +5,37 @@
     flex-direction: column;
     justify-content: space-evenly;
     justify-content: start;
-    height:100%;
+    xheight:100%;
 }
 
-#view-container > .view.inv > * {
-    xborder:1px solid lime;
-}
 
 #view-container > .view.inv > #gold-container {
     xborder:1px solid red;
     height:5%;
     width:100%;
-    padding: 10px 20% 5px 20%;
+    xpadding: 10px 20px 5px 20px;
+    padding-right:40px;
     display:flex;
-    justify-content: right;
-    xbackground-color: rgba(0, 0, 0, 0.3);
-    z-index:1;
+    justify-content: end;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.3);
+    xz-index:1;
+
+    border-style: solid;
+	border-image-source: url('../img/border_simple.png');
+	border-image-slice: 50;
+	border-image-width: 1em;
+	border-image-outset: 1;
+	border-image-repeat: stretch;
+    background-color:rgb(24, 24, 31);
+    xpadding:10px;
 }
 
 #gold-container > .image-container {
     xborder:1px solid red;
     aspect-ratio: 1/1;
-    height:100%;
-    margin:0px 10px 0px 10px;
+    height:60%;
+    margin-left:5px;
     display:flex;
     align-items: center;
     justify-content: center;
@@ -37,6 +45,7 @@
     xborder:1px solid red;
     aspect-ratio: 1/1;
     height:100%;
+    filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.8));
 }
 
 #gold-container > .gold-amount-container {
@@ -69,132 +78,113 @@
 
 
 #item-viewer-container {
-    xborder:1px solid red;
     width:100%;
     height:35%;
     color:grey;
-
     border-style: solid;
 	border-image-source: url('../img/border.png');
 	border-image-slice: 150;
 	border-image-width: 3em 0em;
 	border-image-outset: 0;
 	border-image-repeat: round;
-    xz-index:-1;
+    xborder:1px solid red;
+    overflow-y: auto;
 }
 
 #item-viewer {
     xborder:1px solid red;
     width:100%;
+    xflex:1;
     height:100%;
+    xoverflow-y:auto;
     color:grey;
     display:flex;
     flex-direction: row;
+    xposition: relative;
 }
 
-#item-viewer > .name-container {
+#item-viewer > .details {
     xborder:1px solid cyan;
-    xposition:relative;
-    xbackground-color:black;
-    xbackground-color:green;
+    flex-direction:column;
+    justify-content: start;
     background-color: rgba(0, 0, 0, 0.6);
-
     width:70%;
-
+    height:100%;
     box-shadow: inset 0px 0px 40px 0px rgba(0, 0, 0, 0.8);
+    overflow-y:scroll;
 }
 
-#item-viewer > .name-container > .name {
+#item-viewer > .details > .name {
     xborder:1px solid red;
     background-color:rgba(0, 0, 0, 0.3);
     width:100%;
-    xmargin-top:20px;
     padding: 0px 5px 0px 20px;
     color:rgb(236, 187, 139);
-    xtext-shadow: 0px 0px 5px rgba(0, 0, 0, 0.99), 2px 2px 0px rgba(0, 0, 0, 0.99); 
     height:3em;
     text-align:center;
     display:flex;
     align-items: center;
     justify-content: center;
-  
 }
 
-#item-viewer > .name-container > .type-container {
+#item-viewer > .details > .type-container {
     xborder:1px solid red;
     padding: 5px 10px 5px 20px;
     display:flex;
-    xbackground-color:rgba(0, 0, 0, 0.3);
-    xdisplay:flex;
-    xjustify-content: center;
-    xalign-items: start;
-    xflex-direction: row;
-
-
-
 }
 
-#item-viewer > .name-container > .type-container div:last-child {
+#item-viewer > .details > .type-container div:last-child {
     margin-left: auto;
-  }
-
-#item-viewer > .name-container > .type-container > .quality-title {
-    xborder:1px solid red;
-    xpadding:10px;
-    xdisplay:inline-block;
-
 }
 
-#item-viewer > .name-container > .type-container > .type {
+#item-viewer > .details > .type-container > .quality-title {
     xborder:1px solid red;
-    xdisplay:inline-block;
+}
+
+#item-viewer > .details > .type-container > .type {
+    xborder:1px solid red;
     margin-left:5px;
-
 }
 
 
 
-#item-viewer > .name-container > .type-container > .value-container {
+#item-viewer > .details > .type-container > .value-container {
     xborder:1px solid red;
     display:flex;
-    xalign-items: center;
     font-family: consolas, monospace;
-    xcolor:#ffc4008d;
 }
 
-#item-viewer > .name-container > .type-container > .value-container > .image-container {
+#item-viewer > .details > .type-container > .value-container > .image-container {
     xborder:1px solid red;
-    xaspect-ratio: 1/1;
-    xheight:1em;
-    
 }
 
-#item-viewer > .name-container > .type-container > .value-container > .image-container > .image {
-    
+#item-viewer > .details > .type-container > .value-container > .image-container > .image {
     aspect-ratio: 1/1;
     height:1em;
     margin-left:5px;
 }
 
-#item-viewer > .name-container > .type-container > .value-container > .value {
+#item-viewer > .details > .type-container > .value-container > .value {
     xborder:1px solid red;
-    xdisplay:inline-block;
-    
 }
 
-#item-viewer > .name-container > .effects-container{
+#item-viewer > .details > .effects-container{
     xborder:1px solid red;
     padding: 0px 10px 5px 20px;
-  
 }
 
 
-#item-viewer > .name-container > .effects-container > .effect {
+#item-viewer > .details > .effects-container > .effect {
     xborder:1px solid red;
-    color:rgb(202, 136, 50);
     color: #6969ff;
-    xcolor: #94865a;
-    xcolor:rgb(179, 179, 179);
+}
+
+#item-viewer > .details > .flavor-container {
+    xborder:1px solid red;
+    color: #a79a6d;
+    padding:10px 10px 10px 20px;
+    font-size:0.9em;
+    font-family: "Formal";
 }
 
 
@@ -205,6 +195,7 @@
     box-shadow: inset rgba(0, 0, 0, 0.5) 0px 0px 5px 5px, rgba(0, 0, 0, 0.5) 0px 0px 5px 2px;
     margin-right:5px;
     aspect-ratio:1/1;
+    position:relative;
     width:30%;
     height:100%;
     display:flex;
@@ -248,6 +239,7 @@
     aspect-ratio:1/1;
     width:100%;
     xheight:100%;
+    position:relative;
 }
 
 @keyframes hopperItemViewer {
@@ -261,12 +253,13 @@
     width:100%;
     height:100%;
 	transform-style: preserve-3d;
-
+    position:relative;
     xanimation: spin 10s infinite linear;
 }
 
 .viewer-item > .outer-wrap > .inner-wrap > div {
 	position:absolute;
+    
     xwidth:100%;
     xheight:100%;
 }
@@ -390,13 +383,14 @@
 #inv-grid {
     xborder:1px solid red;
     width:90%;
+    max-width:1000px;
     height:100%;
 
     display:flex;
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: center;
-    align-items: left;
+    align-items: flex-start;
 
     overflow-y: scroll;
 
@@ -490,6 +484,7 @@
     border-radius:5px;
     height:90%;
     min-width:50px;
+    max-width:200px;
     flex:25%;
     background-color: rgba(0, 0, 0, 0.5);
     color:grey;
@@ -507,7 +502,6 @@
   
     background-position: center;
     background-repeat: no-repeat;
-    xbackground-size: cover;
     background-size: 100% 100%;
 
     font-size:1em;

@@ -9,16 +9,23 @@
     <link media='screen' href='css/anim.css' type='text/css' rel='stylesheet' /> 			
 
     <link media='screen' href='css/inv-view.css' type='text/css' rel='stylesheet' /> 			
-    <link media='screen' href='css/stats.css' type='text/css' rel='stylesheet' />
+    <link media='screen' href='css/equipment.css' type='text/css' rel='stylesheet' />
 
     <link media='screen' href='css/modal.css' type='text/css' rel='stylesheet' /> 
     <link media='screen' href='css/menu.css' type='text/css' rel='stylesheet' /> 
     <link media='screen' href='css/canvas.css' type='text/css' rel='stylesheet' /> 	
-    <link media='screen' href='css/enemy.css' type='text/css' rel='stylesheet' /> 		
+    <link media='screen' href='css/enemy.css' type='text/css' rel='stylesheet' /> 
+    <link media='screen' href='css/checkbox.css' type='text/css' rel='stylesheet' /> 				
 
     <link media='screen' href='css/top-buttons.css' type='text/css' rel='stylesheet' /> 			
 
     <link media='screen' href='css/map.css' type='text/css' rel='stylesheet' /> 			
+    <link media='screen' href='css/msg.css' type='text/css' rel='stylesheet' /> 
+    <link media='screen' href='css/xp-bar.css' type='text/css' rel='stylesheet' /> 		
+    <link media='screen' href='css/character.css' type='text/css' rel='stylesheet' />
+    <link media='screen' href='css/settings.css' type='text/css' rel='stylesheet' /> 	
+    <link media='screen' href='css/item-modal.css' type='text/css' rel='stylesheet' /> 																		
+																	
 
     <link media='screen' href='css/debug.css' type='text/css' rel='stylesheet' /> 			
 
@@ -27,10 +34,9 @@
 
     <meta name="mobile-web-app-capable" content="yes">
 
-    <!--<meta name="theme-color" content="#212121">
-		<meta name='msapplication-navbutton-color' content='#212121'>--> <!-- Windows Phone -->		
-		<meta name='apple-mobile-web-app-status-bar-style' content='#212121'> <!-- iOS Safari -->
-
+    <meta name="theme-color" content="#181818">
+		<meta name='msapplication-navbutton-color' content='#181818'>
+		<meta name='apple-mobile-web-app-status-bar-style' content='#181818'>
 
     <link rel="apple-touch-icon" sizes="180x180" href="icon/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="icon/favicon-32x32.png">
@@ -38,33 +44,91 @@
     <link rel="manifest" href="icon/site.webmanifest">
     <link rel="mask-icon" href="icon/safari-pinned-tab.svg" color="#681f1f">
     <meta name="msapplication-TileColor" content="#252525">
-    <meta name="theme-color" content="#181818">
+    <script rel="preload" src='https://kit.fontawesome.com/5ed908a148.js' crossorigin='anonymous'></script>	
 
-    <!--<link rel='shortcut icon' href='favicon.ico'>-->
-    <title>TapperLooter</title>
+    <meta name="keywords" content="Game, tapper, looter, TapperLooter, rpg, browser, HTML, CSS, JavaScript, client-side, client side">
+    <meta name="description" content="Monster slayer rpg game for mobile browsers.">
+
+  <meta property="og:title" content="TapperLooter" />
+  <meta property="og:description" content="Monster slayer rpg game for mobile browsers." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="http://chazu.arkku.net/misc/tapper-looter/" />
+  <meta property="og:image" content="http://chazu.arkku.net/misc/tapper-looter/icon/android-chrome-192x192.png" />
+  <title>TapperLooter</title>
   </head>
 
   <body>
     
 
     <div id='content'>
+      <div id='msg-container'>
 
+      </div>
 
       <div id='modal-container'>
 
+        <div class='modal-window settings'>
+
+          <div class='title'>Settings</div>
+          <div class='content'>
+
+            <div class='setting'>
+              <div class='checkbox-wrapper'>
+                <div class="checkbox">
+                  <input class="tgl tgl-ios" id="low-spec-setting" type="checkbox"/>
+                  <label class="tgl-btn" for="low-spec-setting"></label>
+                </div>
+              </div>
+              <span class='name'>Low-spec mode</span>
+              <div class='desc'>Disable some game animations to increase performance.</div>
+            </div>
+
+            <div class='setting'>
+              <div class='checkbox-wrapper'>
+                <div class="checkbox">
+                  <input class="tgl tgl-ios" id="crit-messages-setting" type="checkbox"/>
+                  <label class="tgl-btn" for="crit-messages-setting"></label>
+                </div>
+              </div>
+              <span class='name'>Crit messages</span>
+              <div class='desc'>Display message when inflicting critical hit.</div>
+            </div>
+
+            <div class='setting'>
+              <div class='checkbox-wrapper'>
+                <div class="checkbox">
+                  <input class="tgl tgl-ios" id="lock-uniques-setting" type="checkbox"/>
+                  <label class="tgl-btn" for="lock-uniques-setting"></label>
+                </div>
+              </div>
+              <span class='name'>Auto-lock uniques</span>
+              <div class='desc'>Auto-lock <span style="color:#a79a6d;">unique</span> tier item drops to prevent accidentally selling them.</div>
+            </div>
+         
+     
+          
+
+          </div>
+
+          <div class='button-container'>
+            <div class='button' onclick=hideModal()>Close</div>
+          </div>
+        </div>
+
+
         <div class='modal-window help'>
+
           <div class='title'>Help</div>
           <div class='content'>
-            <h3>Gameplay</h3>
+            <h2>Gameplay</h2>
             <p>
             Tap enemy to defeat it and loot items. You can inspect looted items in inventory, and sell or equip them. You can't loot more items if inventory is full. 
             </p>
             <p>
               To un-equip item, tap the item icon in equipment view.
             </p>
-
-            <h3>Item rarity</h3>
-            Item rarity tiering is color coded as follows:<br>
+            <h2>Items</h2>
+            Item tiers are color-coded as follows:<br>
             <ul style='font-family:consolas,monospace'>
               <li><span style="color:#9d9d9d;">Weak</span></li>
               <li><span style="color:#e6e6e6;">Normal</span></li>
@@ -72,32 +136,28 @@
               <li><span style="color:#FFE400;">Rare</span></li>
               <li><span style="color:#1eff00;">Epic</span></li>
               <li><span style="color:#ff8000;">Legendary</span></li>
-
-              <!--
-              <li><span style="color:#9d9d9d;">Weak</span></li>
-              <li><span style="color:#e6e6e6;">Common</span></li>
-              <li><span style="color:#0073e6;">Uncommon</span></li>
-              <li><span style="color:#1eff00;">Rare</span></li>
-              <li><span style="color:#a335ee;">Epic</span></li>
-              <li><span style="color:#ff8000;">Legendary</span></li>
-              -->
+              <li><span style="color:#a79a6d;">Unique</span> (very rare)</li>
+            
             </ul>
  
-         
-
-            <p>Higher tier items have higher maximum rolls so they can roll higher stats than lower tiers. </p>
+            <p>Higher tier items have higher maximum rolls so they can get higher stats than lower tiers. <span style="color:#a79a6d;">Unique</span> items have fixed name and stats.</p>
 
             <h3>Item types</h3>
-            There are 3 kinds of items in the game:
+            <p>
+              The player has an equipment slot for each item type.<br>
+              There are 3 item types in the game:
+            </p>
+           
             <ul style='font-family:consolas,monospace'>
               <li>Weapon</li>
               <li>Amulet</li>
               <li>Talisman</li>
             </ul>
-            The player has 3 equipment slots, one for each item type.<br>
-            Weapons are divided further into types:
+            <p>
+              Weapons are divided further into types:
+            </p>
+         
 
-       
             <ul style='font-family:consolas,monospace'>
               <li>Sword</li>
               <li>Axe</li>
@@ -107,7 +167,37 @@
               <li>Staff</li>
               <li>Spear</li>
             </ul>
+
+            <h3>Item locking</h3>
+            <p>Tap "Lock" button in inventory to lock selected item. A small lock icon will appear on the locked item. Locked items can't be sold, and will be kept when selling the whole inventory with "Sell inv" button.</p>
+
+            <h2>Player stats</h2>
+
+            <p>Player stats can be viewed in the equipment view.</p>
+            <p>Magic find stat increases chance to find unique items.</p>
+            <p>Gold find increases gold gained when selling items.</p>
             
+            <h2>Map & zones</h2>
+            <p>Select map zones and click travel button to travel there. You can only travel to zones which have routes (lines) between them.</p>
+
+            <p>
+              Different zones have higher hp enemies and larger drop pool. For example, the start zone can only drop items up to tier 3 (<span style="color:#6969ff;">blue</span>), and has no elite enemies (enemies with high hp and better loot).<br><br>
+              Each zone has different <span style="color:#a79a6d;">unique</span> items which they can drop. 
+            </p>
+
+ 
+  
+
+            <h2>Game save</h2>
+            <p>The game state is automatically saved to the web browser's local storage. Save is loaded when re-opening the game. Save can be reset by selecting "Reset save" in the main menu.</p>
+
+            <!--
+            <h2>List of uniques</h2>
+            <p>
+              <ul id="unique-list">
+              </ul>
+            </p>
+            -->
            
           </div>
           <div class='button-container'>
@@ -125,8 +215,8 @@
               <div class='info-container'>
                 <div class='info'>
                   <div class='about-name'>TapperLooter</div>
-                  <div class='about-version'>v1.0.4</div>
-                  <div class='about-date'>updated <br> 2024-03-22</div>
+                  <div class='about-version'>v1.1.0</div>
+                  <div class='about-date'>updated<br> 2024-07-09</div>
                 </div>
               </div>
               <div class='image'>
@@ -163,6 +253,15 @@
               <li>
                 UI border by <a href='https://opengameart.org/content/inventory' target='_blank'>Cethiel</a>
               </li>
+
+              <li>todo: map graphics</li>
+              <li>todo: map minotaur</li>
+              <li>todo: map cultist </li>
+              <li>todo: map skull </li>
+              <li>todo: Stone Soup rpg icons for map zones and some items </li>
+              <li>todo: lock icon </li>
+              <li>todo: enemy type icons </li>
+              <li>todo: stone texture for char view items </li>
             </ul>
        
           </div>
@@ -178,10 +277,11 @@
       <div id='menu-container'>
         <div id='menu' class=''>
           <div id='title-container'>
-            <div id='title' class=''>Tapper | Looter</div>
+            <div id='title'>Tapper Looter</div>
           </div>
   
           <div class='button small reset' onclick=reset()>Reset save</div>
+          <div class='button small settings'>Settings</div>
           <div class='button small help'>Help</div>
           <div class='button small about'>About</div>
           <div class='button' onclick=showMenu(false)>Back</div>
@@ -189,8 +289,18 @@
       </div>
 
 
-
+      <div id='border-layer-basic'></div>
       <div id='border-layer'></div>
+
+      <div id='item-modal' class='hidden'>
+        <div class='content'>
+
+          <div class='button-container'>
+            <div class='button close'>Close</div>
+          </div>
+        </div>
+
+      </div>
       
 
       <div id='view-container'>
@@ -199,40 +309,41 @@
         <div class='view combat hidden'>
 
           <div id='top-buttons'>
-            <div class='top-button' id='menu-button'>Menu</div>
-         
+            <div class='top-button' id='menu-button'><i class="fa-solid fa-gear"></i></div>
           </div>
+
+          <div class='title'>Combat</div>
+          <div id='zone-title'>zone title</div>
 
           <canvas id='canvas'></canvas>
      
+          <div id='enemy-container'>
 
-         <div id='enemy-container'>
-
-          <div id='enemy-name-container'>
-            <div id='enemy-name'> </div>
-          </div>
-
-          <div id='enemy-image-container'>
-            <div class='damage-overlay hidden'></div>
-            <div id='enemy-image'></div>
-     
-          </div>
-
-          <div id='enemy-hp-bar-container'>
-            
-            <div class='border-layer'></div>
-            <div class='bar bg'></div>
-            <div class='bar main'></div>
-
-            <div class='hp-container'>
-              <div class='current'>000</div>
-              <span>/</span>
-              <div class='max'>000</div>
+            <div id='enemy-name-container'>
+              <div id='enemy-name'></div>
             </div>
-          </div>
 
+            <div id='enemy-type-container'>
+              <img id='enemy-type-image' />
+              <div id='enemy-type'>Undead</div>
+            </div>
+
+            <div id='enemy-image-container'>
+              <div class='damage-overlay hidden'></div>
+              <div id='enemy-image'></div>
+            </div>
+
+            <div id='enemy-hp-bar-container'>
+              <div class='border-layer'></div>
+              <div class='bar bg'></div>
+              <div class='bar main'></div>
+              <div class='hp-container'>
+                <div class='current'>000</div>
+                <span>/</span>
+                <div class='max'>000</div>
+              </div>
+            </div>
          </div>
-
 
           <div id='loot-container' class='hidden'>
             <div id='loot-name-container'><div id='loot-name'></div></div>
@@ -255,14 +366,35 @@
               </div>
          </div>
 
+
+          <div id='xp-bar-container'> 
+
+            <div id='xp-bar'>
+
+              <div class='bg'></div>
+              <div class='bar'></div>
+              <div class='fade'></div>
+              <div class='level-container'>
+                LV <span class='level'>1</span>
+              </div>
+
+            </div>
+
+          </div>
+
+
+
+
         </div>
 
 
+
+
+
         <div class='view inv hidden'>
+          <div class='title'>Inventory</div>
 
-      
           <div id='gold-container'>
-
             <div class='gold-amount-container'>
               <div class='gold-amount'>0</div>
             </div>
@@ -280,7 +412,8 @@
           <div id='item-viewer-container'>
             <div id='item-viewer'>
 
-              <div class='name-container'>
+              <div class='details'>
+
                 <div class='name'></div>
 
                 <div class='type-container'>
@@ -298,6 +431,7 @@
                 </div>
 
                 <div class='effects-container'></div>
+                <div class='flavor-container'></div>
               </div>
 
               <div class='image-container'>
@@ -347,49 +481,212 @@
         </div>
 
 
-
-        <div class='view stats hidden'>
-          
+        <div class='view equipment hidden'>
+          <div class='title'>Equipment</div>
           <div id='equipment-container'></div>
 
+
           <div id='player-stats-container'>
+
+            <div id='player-stats'>
             
-            <div class='row'>
-              <div class='label'>Damage</div>
-              <div class='value damage'>-1</div>
-            </div>
+              <div class='stat'>
+                <div class='label'>Damage</div>
+                <div class='num damage'>-1</div>
+              </div>
 
-            <div class='row'>
-              <div class='label'>Critical Chance</div>
-              <div class='value crit-chance'>-1</div>
-            </div>
+              <div class='stat'>
+             
+              </div>
 
-            <div class='row'>
-              <div class='label'>Critical Damage</div>
-              <div class='value crit-damage'>-1</div>
-            </div>
+              <div class='stat'>
+                <div class='label'>Crit Chance</div>
+                <div class='num crit-chance'>-1</div>
+              </div>
 
-            <div class='row'>
-              <div class='label'>Magic Find</div>
-              <div class='value magic-find'>-1</div>
-            </div>
-            
-            <div class='row'>
-              <div class='label'>Gold Find</div>
-              <div class='value gold-find'>-1</div>
+              <div class='stat'>
+                <div class='label'>Magic Find</div>
+                <div class='num magic-find'>-1</div>
+              </div>
+
+              <div class='stat'>
+                <div class='label'>Crit Dmg</div>
+                <div class='num crit-damage'>-1</div>
+              </div>
+
+ 
+              
+              <div class='stat'>
+                <div class='label'>Gold Gain</div>
+                <div class='num gold-find'>-1</div>
+              </div>
+              
             </div>
 
           </div>
         
+          
+        </div>
+
+        
+        <div class='view character hidden'>
+          <div class='title'>Character</div>
+
+
+
+          <div class='section level-xp-cont'>
+            <div class='box level-cont'>
+              <div class='label'>Level</div>
+              <div class='num level'>1</div>
+            </div>
+
+            <div class='box xp-cont'>
+              <div class='label'>Experience</div>
+              <div class='num xp'>0</div>
+            </div>
+
+            <div class='box next-cont'>
+              <div class='label'>Next Level</div>
+              <div class='num next'>0</div>
+            </div>
+          </div>
+
+
+          <div class='section' id='attribute-cont' >
+            <div class='title-cont'>
+              <div class='title'>Attributes</div>
+            </div>
+
+            <div id='available-points-cont'>
+              <span class='box label'>Available points:</span>
+              <span class='box points'>0</span>
+
+              <div class='respec-cont'>
+                <div class='respec'>Respec</div>
+              </div>
+            </div>
+            
+            <div id='attributes'>
+     
+              <div class='item box str'>
+                  <div class='name'>STR</div>
+                  <div class='current'>0</div>
+                
+
+                  <div class='details'>
+                    <div class='row'>
+                        <span class='label'>Dmg bonus:</span>
+                        <span class='num dmg-bonus'>0%</span>
+                    </div>
+
+                    <div class='row'>
+                      <span class='label'>Total damage:</span>
+                      <span class='num dmg'>0</span>
+                    </div>
+                  </div>
+
+                  <div class='plus-cont'><div class='plus'><i class="fa-solid fa-plus"></i></div></div>
+              </div>
+
+              <div class='item box dex'>
+                <div class='name'>DEX</div>
+                <div class='current'>0</div>
+              
+                <div class='details'>
+                  <div class='row'>
+                    <span class='label'>Critical bonuses</span>
+                  </div>
+                  <div class='row'>
+                      <span class='label'>Chance:</span>
+                      <span class='num crit-chance-bonus'>+0%</span>
+                  </div>
+                  <div class='row'>
+                    <span class='label'>Damage:</span>
+                    <span class='num crit-dmg-bonus'>0</span>
+                  </div>
+                </div>
+
+                <div class='plus-cont'><div class='plus'><i class="fa-solid fa-plus"></i></div></div>
+
+              </div>
+
+              <div class='item box int'>
+                <div class='name'>INT</div>
+                <div class='current'>0</div>
+       
+                <div class='details'>
+                  <div class='row'>
+                      <span class='label'>Magic Find:</span>
+                      <span class='num magic-find-bonus'>+0%</span>
+                  </div>
+                  <div class='row'>
+                    <span class='label'>Gold Gain:</span>
+                    <span class='num gold-find-bonus'>+0%</span>
+                  </div>
+                </div>
+
+                <div class='plus-cont'><div class='plus'><i class="fa-solid fa-plus"></i></div></div>
+              </div>
+          
+            </div>
+
+          </div>
+
+          <div class='section' id='adventure-log' >
+            <div class='title-cont'><div class='title'>Adventure Log</div></div>
+
+            <div class='stats'>
+
+              <div class='row'>
+                <span class='label'>Enemies slain:</span>
+                <span class='num enemies-killed'>0</span>
+              </div>
+
+              <div class='row'>
+                <span class='label'>Items looted:</span>
+                <span class='num items-looted'>0</span>
+              </div>
+
+              <div class='row'>
+                <span class='label'>Items sold:</span>
+                <span class='num items-sold'>0</span>
+              </div>
+
+              <div class='row'>
+                <span class='label'>Gold gained:</span>
+                <span class='num gold-gained'>0</span>
+              </div>
+
+            </div>
+
+          </div>
+
+          <div class='section' id="unique-log" >
+            <div class='title-cont'>
+              <div class='title'>Unique Item Log</div>
+            </div>
+            <div class='info'>
+              Unique items found: <span class='found-amount'>0</span>/<span class='total-amount'>
+            </div>
+            <div class='list'></div>
+  
+          </div>
+
+
+
         </div>
 
 
         <div class='view map hidden'>
+          <div class='title'>Map</div>
           <div id='map-container'>
             <div id='map'>
-              <img src='../img/map_pergament_small.png'/>
-
+              <img id='map-background'>
             </div>
+          </div>
+
+          <div id='map-bar'>
+            <div id='travel' class='button'>Travel to target</div>
           </div>
 
         </div>
@@ -408,11 +705,11 @@
           <img class='joku' src='img/helm.png' />
         </div>
 
-        <!--
-        <div class='tab'>
-          <img class='joku' src='img/skill.png' />
+        
+        <div class='tab character'>
+          <img class='joku' src='img/arrows.png' />
         </div>
-        -->
+        
 
         <div class='tab'>
           <img class='joku' src='img/map.png' />
@@ -434,10 +731,18 @@
     <script src='js/color.js'></script>
     <script src='js/anims.js'></script>
     <script src='js/settings.js'></script>
+    <script src='js/enemy-data.js'></script>
+
+    <script src='js/msg.js'></script>
+
     <script src='js/util.js'></script>
+    <script src='js/map.js'></script>
+  
+
     <script src='js/save.js'></script>
    
     <script src='js/main.js'></script>
+    <script src='js/uniques.js'></script>
 
 
   </body>

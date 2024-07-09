@@ -9,6 +9,9 @@
 
     display:flex;
     flex-direction:row;
+    justify-content: center;
+    align-items: center;
+
 
     background-color: rgb(30, 30, 30);
     border-style: solid;
@@ -27,6 +30,7 @@
 
     xflex-basis:100%;
     width:100%;
+    max-width:150px;
     height:100%;
 
     display:flex;

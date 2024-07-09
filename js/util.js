@@ -2,19 +2,24 @@ const log = console.log;
 const viewportW = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
 const viewportH = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0)
 
-const ranNum = function(min,max) {
+const mainMenuTitle = document.getElementById('title');
+const mainMenuElem = document.getElementById('menu-container');
+
+
+
+const ranNum = (min,max) => {
 	return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-const selectFrom = function(arr) {
+const selectFrom = arr => {
 	return arr[ranNum(0, arr.length-1)];
 }
     
-const selectFromArrs = function(arrayOfArrays) {
+const selectFromArrs = arrayOfArrays => {
 	return selectFrom(selectFrom(arrayOfArrays))
 }
 	
-const chance = function(chancePercent) {
+const chance = chancePercent =>  {
 	if (ranNum(1,100) <= chancePercent){
 		return true;
 	} else {
@@ -22,7 +27,25 @@ const chance = function(chancePercent) {
 	}
 }	
 
-const shuffleArr = function(arr) {
+const chanceFrac = fraction => {
+	if (Math.random() <= fraction){
+		//log(`Hit drop for drop rate: ${fraction}`)
+		return true;
+	} else {
+		return false;
+	}
+}	
+
+/*
+// test chanceFrac
+for (let i=0; i<10000; i++) {
+	const dropRate = 1/250; //0.01
+	chanceFrac(dropRate);
+	//log(Math.random())
+}
+*/
+
+const shuffleArr = arr => {
 	for (let i = arr.length; i; i--) {
 		let j = Math.floor(Math.random() * i);
 		[arr[i - 1], arr[j]] = [arr[j], arr[i - 1]];
@@ -52,7 +75,7 @@ const hideModal = () => {
             //win.style.opacity = 0;
         }
       }, 200);
-  
+	enableMainMenuTitleAnimation(true);
 }
 
 const showModal = targetName => {
@@ -63,40 +86,45 @@ const showModal = targetName => {
     modal.style.visibility = 'visible';
     modal.style.opacity = 1;
     //target.style.opacity = 1;
+	enableMainMenuTitleAnimation(false);
 }
 
 
 
 
 const showMenu = (show=true) => {
-    const elem = document.getElementById('menu-container');
-
+	const elem = mainMenuElem;
     if (show) { // Show
 		elem.style.visibility = 'visible';
 		elem.style.opacity = 1;
+		enableMainMenuTitleAnimation(true);
     } else { // Hide 
 		elem.style.opacity = 0;
 		setTimeout(() => {
 			elem.style.visibility = 'hidden';
+			enableMainMenuTitleAnimation(false);
 		}, 200);
     }
 }
 
-/*
-const showMap = (show=true) => {
-    const elem = document.getElementById('map-container');
-
-    if (show) {
-        // Show 
-		elem.style.visibility = 'visible';
-		elem.style.opacity = 1;
-
-    } else {
-        // Hide 
-		elem.style.opacity = 0;
-		setTimeout(() => {
-			elem.style.visibility = 'hidden';
-		}, 200);
-    }
+const setUniqueListInMenu = () => {
+	const target = document.getElementById('unique-list');
+	const uniqueList = Object.getOwnPropertyNames(uniques);
+	uniqueList.sort();
+	for (const item of uniqueList) {
+		const elem = document.createElement('li');
+		elem.innerHTML = `<span style="color:#a79a6d;">${item}</span>`;
+		target.append(elem);
+	}
 }
-*/
+
+
+const enableMainMenuTitleAnimation = enable => {
+	//log('enableMainMenuTitleAnimation')
+	if (enable) {
+		mainMenuTitle.classList.add('red-glow-animation');
+	} else {
+		mainMenuTitle.classList.remove('red-glow-animation');
+	}
+}
+

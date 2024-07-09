@@ -4,8 +4,10 @@
 const bottomTabs = document.querySelectorAll('#bottom-bar > .tab');
 const invIcon = document.querySelector('#bottom-bar > .tab.inv > img');
 
+
 const views = document.querySelectorAll('#view-container > .view');
 const combatView = document.querySelector('#view-container > .combat.view');
+const zoneTitle = document.getElementById('zone-title');
 
 
 const lootItemContainer = document.getElementById('loot-container');
@@ -17,6 +19,9 @@ const lootItemNormalGlow = document.querySelector('.item-normal-glow');
 
 const enemyContainer = document.getElementById('enemy-container');
 const enemyNameElem = document.getElementById('enemy-name');
+const enemyTypeElem = document.getElementById('enemy-type');
+const enemyTypeImage = document.getElementById('enemy-type-image');
+
 const enemyImageContainer = document.getElementById('enemy-image-container');
 const enemyDamageOverlay = enemyImageContainer.querySelector('.damage-overlay');
 const enemyImageElem = document.getElementById('enemy-image');
@@ -29,19 +34,26 @@ const enemyHpCurrent = document.querySelector('#enemy-hp-bar-container > .hp-con
 const enemyHpMax = document.querySelector('#enemy-hp-bar-container > .hp-container > .max');
 
 
+// Xp bar in combat view
+const levelNumElem = document.querySelector('#xp-bar > .level-container > .level');
+const xpBarElem = document.querySelector('#xp-bar > .bar');
+
+
+
 const invGrid = document.getElementById('inv-grid');
 let invSlots; // set in createInvSlots() function
 
-const itemViewerName = document.querySelector('#item-viewer > .name-container > .name');
+const itemViewerName = document.querySelector('#item-viewer > .details > .name');
 
-const itemViewerQualityTitle = document.querySelector('#item-viewer > .name-container > .type-container > .quality-title');
+const itemViewerQualityTitle = document.querySelector('#item-viewer > .details > .type-container > .quality-title');
 
-const itemViewerTypeTitle = document.querySelector('#item-viewer > .name-container > .type-container > .type');
+const itemViewerTypeTitle = document.querySelector('#item-viewer > .details > .type-container > .type');
 
-const itemViewerSellValueContainer = document.querySelector('#item-viewer > .name-container > .type-container > .value-container');
-const itemViewerSellValue = document.querySelector('#item-viewer > .name-container > .type-container > .value-container > .value');
+const itemViewerSellValueContainer = document.querySelector('#item-viewer > .details > .type-container > .value-container');
+const itemViewerSellValue = document.querySelector('#item-viewer > .details > .type-container > .value-container > .value');
 
-const itemViewerEffectsContainer = document.querySelector('#item-viewer > .name-container > .effects-container');
+const itemViewerEffectsContainer = document.querySelector('#item-viewer > .details > .effects-container');
+const itemViewerFlavorContainer = document.querySelector('#item-viewer > .details > .flavor-container ');
 
 //const viewerItemContainer = document.getElementById('loot-container');
 //const viewerItemImage = document.querySelector('.loot-item');
@@ -54,6 +66,8 @@ const itemViewerBottomShadow = document.querySelector('#item-viewer > .image-con
 const viewerItemLayers = document.querySelectorAll('#item-viewer > .image-container > .viewer-item > .outer-wrap > .inner-wrap > .image');
 const viewerItemNormalGlow = document.querySelector('#item-viewer > .image-container > .viewer-item > .outer-wrap > .inner-wrap > .item-normal-glow-container > .item-normal-glow');
 
+
+
 const sellSelectedButton = document.getElementById('sell-selected');
 const sellAllButtonButton = document.getElementById('sell-all');
 const lockSelectedButton = document.getElementById('lock-selected');
@@ -63,51 +77,125 @@ const playerGoldElem = document.querySelector('#gold-container > .gold-amount-co
 const goldAnimContainer = document.querySelector('#gold-container > .gold-anim-container');
 const goldAnim = document.querySelector('#gold-container > .gold-anim-container > .gold-anim');
 
+// Character view elems
+const characterLevelElem = document.querySelector('.character.view > .level-xp-cont > .level-cont > .level');
+const characterXpElem = document.querySelector('.character.view > .level-xp-cont > .xp-cont > .xp');
+const characterNextLevelElem = document.querySelector('.character.view > .level-xp-cont > .next-cont > .next');
+
+// Adventuire log stats in Character view
+const enemiesKilledElem = document.querySelector('#adventure-log > .stats > .row > .num.enemies-killed');
+const itemsLootedElem = document.querySelector('#adventure-log > .stats > .row > .num.items-looted');
+const itemsSoldElem = document.querySelector('#adventure-log > .stats > .row > .num.items-sold');
+const goldGainedElem = document.querySelector('#adventure-log > .stats > .row > .num.gold-gained');
+
 const modal = document.getElementById('modal-container');
 
 
 let enemy = {
-    name:-1,
+    name: -1,
+    title:'', //flavor name, generated
+    type: -1,
     dead: false,
+    xp: -1,
     hp: {
         max: settings.enemyMaxHp,
         current:settings.enemyMaxHp,
     },
-    lootItem:{},
-    image:-1,
+    lootItem: {},
+    image: -1,
 }
 
 class Player {
     constructor() {
-        this.invSlots = 30,
-        this.inv = [],
-        this.gold = 0,
+        this.invSlots = 30;
+        this.inv = [];
+        this.gold = 0;
         this.goldFind = 0; 
         this.magicFind = 0;
-        this.kills = 0,
-        this.tab = 0,
+        this.kills = 0;
+        this.tab = 0;
+        this.xp = 0;
+        this.totalXp = 0;
+        this.xpToLevel = -1;
+        this.level = 1;
+
+        this.attributes = {
+            str:10,
+            dex:10,
+            int:10,
+            unusedPoints:0,
+            base:10,
+        }
     
         this.damage = {
             base: 10,
             bonus: 0,
             typeBonus:0,
-        },
+        }
     
         this.crit = {
             chance: 0,
             multiplier: 1.5,
             baseMultiplier: 1.5
-        },
+        }
     
         this.equipment =  {
             weapon: -1,
             amulet: -1,
             artifact: -1
         }
-    
 
+        this.adventureLog = {
+            enemiesKilled:0,
+            itemsLooted:0,
+            itemsSold:0,
+            goldGained:0,
+        
+        }
+
+        //unique log: every unique name is key, value is boolean, if found or not
+        this.uniqueLog = {
+
+        }
+       
+        this.addXp = amount => {
+            this.xp = this.xp + amount;
+            this.totalXp += amount;
+            if (this.xp >= this.xpToLevel) {
+                this.levelUp();
+                msg(`<span class='level-up'>Level up</span>`);
+            }
+            setXpBar();
+        }
+        
+        this.levelUp = () => {
+            this.level += 1;
+            this.attributes.unusedPoints += 1;
+            setPlayerStats();
+            // set xp for next level
+            this.xp = 0;
+            this.xpToLevel = getXpToLevel(this.level);
+            setXpToLevel();
+            setXpBar();
+        }
+
+        this.addAttribute = attr => {
+            if (this.attributes.unusedPoints > 0) {
+                this.attributes.unusedPoints -= 1;
+                this.attributes[attr] += 1;
+                setPlayerStats();
+                save();
+            } else {
+                msg('No points available')
+            }
+
+     
+        
+        }
     }
 
+    
+   
 
 }
 
@@ -141,12 +229,13 @@ const itemQuality = [
     {name:'Rare', color:'#FFE400'},  // wowBlue: 0070dd, other blue 0073e6, d2 blue 6969ff
     {name:'Epic', color:'#1eff00'},  
     {name:'Legendary', color:'#ff8000'}, 
+    {name:'Unique', color:'#a79a6d'}, 
 ] 
 
 
 
 class Item {
-    constructor(name, type, isWeapon, imageSrc, qLevel, sellValue, effects, locked) {
+    constructor(name, type, isWeapon, imageSrc, qLevel, sellValue, effects, locked, flavor) {
         this.name = name;
         this.type = type;
         this.isWeapon = isWeapon;
@@ -156,6 +245,7 @@ class Item {
         this.effects = effects;
         this.looted = false;
         this.locked = locked;
+        this.flavor = flavor;
     }
 }
 
@@ -221,9 +311,17 @@ class GoldFind extends Effect {
         super('GoldFind');
         this.value = percent;
         this.text = `Gain ${percent}%  more gold`;
-
     }
 }
+
+class MagicFind extends Effect {
+    constructor(percent) {
+        super('MagicFind');
+        this.value = percent;
+        this.text = `Find ${percent}%  more rare items`;
+    }
+}
+
 
 
 
@@ -283,6 +381,14 @@ const createItemEffects = (type, isWeapon, qLevel) => {
         effects.push(eff);
     }
 
+    // Magic find
+    if ( chance(10) ) {
+        const min = 5;
+        const max = (qLevel+1)*5 ;
+        const eff = new MagicFind(ranNum(min, max));
+        effects.push(eff);
+    }
+
     // Gold find
     if ( chance(10) && !isWeapon ) {
         const min = 5;
@@ -292,7 +398,7 @@ const createItemEffects = (type, isWeapon, qLevel) => {
     }
 
     //Increased sell value
-    if ( chance(10) && qLevel > (2-3) ) {
+    if ( chance(10) && qLevel > (2-3) || effects.length === 0 ) {
         let min = 5;
         let max = 50;
         let percent = ranNum(min, max);
@@ -300,15 +406,23 @@ const createItemEffects = (type, isWeapon, qLevel) => {
         effects.push(effect);
     }
 
-
-
-
-
     return effects;
 }
 
 
-const createItem = (type='random', qLevel='random') => {
+
+const getUniqueItem = name => {
+    const data = uniques[name];
+
+    // Item is locked if setting is on
+    const autoLocked = settings.autoLockUniques;
+
+    const item = createItem(data.type, 6, name, data.image, data.effects, data.flavor, autoLocked);
+    return item;
+}
+
+
+const createItem = (type='random', qLevel='random', name='random', image='random', effects='random', flavor='', locked=false) => {
     const others = ['amulet', 'artifact'];
     const weapons = [ 'axe', 'bow', 'hammer', 'mace', 'spear', 'staff', 'sword'];
     const types = others.concat(weapons);
@@ -317,18 +431,18 @@ const createItem = (type='random', qLevel='random') => {
         type = selectFrom(types);
     }
 
-    //type = 'artifact'; //testing names
 
     const isWeapon = weapons.includes(type);
     //log(`${type} isWeapon: ${isWeapon}`)
 
-    const imageSrc = `img/item/${type}${ranNum(1, itemImageAmounts[type])}.png`
+    const diff = mapData.currentNode.difficulty;
+    // 8 map zones, 8 difficulty levels: 1-8
 
     if (qLevel === 'random') {
         qLevel = 0;
-        if (chance(1)) {
+        if (chance(1) && diff >= 4) {
             qLevel = 5;
-        } else if (chance(5)) {
+        } else if (chance(5) && diff >= 3) {
             qLevel = 4;
         } else if (chance(10)) {
             qLevel = 3;
@@ -339,23 +453,44 @@ const createItem = (type='random', qLevel='random') => {
         }      
     }
 
+    let imageSrc;
+    if (image === 'random') {
+        imageSrc = `img/item/${type}${ranNum(1, itemImageAmounts[type])}.png`
+    } else if (qLevel === 6){
+        imageSrc = `img/item/unique/${image}.png`
+    }
 
-    const nameGenTypes = ['normal', 'normal', 'magic', 'rare', 'legendary', 'mythic'];
-    const name = rpgItemGen.createItem(type, nameGenTypes[qLevel]);
-    
+
+
+    if (name === 'random') {
+        const nameGenTypes = ['normal', 'normal', 'magic', 'rare', 'legendary', 'mythic'];
+        name = rpgItemGen.createItem(type, nameGenTypes[qLevel]);
+    }
+
+   
 
     const valueMin = qLevel * 5 + 1;
     const valueMax = valueMin + valueMin*2;
     let sellValue = ranNum(valueMin, valueMax);
+
+    // Unique items are qLevel 6
+    if (qLevel === 6) {
+        sellValue *= 20;
+    }
     
     // Create effects
-    const effects = createItemEffects(type, isWeapon, qLevel);
-    /*
+    // if item is not unique, create random effects
+    //let effects = [];
+    if (effects === 'random') {
+        effects = createItemEffects(type, isWeapon, qLevel);
+    }
+   
+/*
     let effectAmount = ranNum(0, 2) 
     for (let i=0; i<effectAmount; i++) {
-
     }
-    */
+*/
+
     // If item has IncreasedValue effect, apply it
     for (const eff of effects) {
         if (eff.name === 'IncreasedValue') {
@@ -363,7 +498,7 @@ const createItem = (type='random', qLevel='random') => {
         }
     }
 
-    const item = new Item(name, type, isWeapon, imageSrc, qLevel, sellValue, effects, false);
+    let item = new Item(name, type, isWeapon, imageSrc, qLevel, sellValue, effects, locked, flavor);
     return item;
 }
 
@@ -371,33 +506,85 @@ const createItem = (type='random', qLevel='random') => {
 
 
 
+
 const createEnemy = () => {
-    enemy.dead = false;
-    enemy.name = heroGen.getName();;
+    const node = mapData.nodes[mapData.currentNode];
+    const diff = node.difficulty;
+    const nodeEnemies = node.enemies;
+    const selectedEnemy = selectFrom(nodeEnemies)
+    const data = enemies[selectedEnemy];
    
-    const imageNum = ranNum(1, settings.enemyImageAmount);
-    enemy.image = `img/creature/creature (${imageNum}).jpg`;
- 
 
-    enemy.hp.max = ranNum(settings.enemy.hp.min, settings.enemy.hp.max);
+    enemy.dead = false;
+    enemy.type = data.type;
+    enemy.xp = Math.floor(diff * 5);
+    //enemy.name = heroGen.getName();
+    enemy.name = toTitleCase(selectedEnemy);
+    enemy.title = heroGen.getName();
+   
+    //const imageNum = ranNum(1, settings.enemyImageAmount);
+    //enemy.image = `img/creature/creature (${imageNum}).jpg`;
+    const selectedImage = selectFrom(enemies[selectedEnemy].imgs);
+    enemy.image = `img/creature/${selectedImage}.jpg`;
+   
+    //log(diff);
+
+    enemy.hp.max = ranNum(settings.enemy.hp.min*diff, settings.enemy.hp.max*diff);
+    
+    
     enemy.lootItem = createItem();
+  
 
-        // Create boss enemy
+
+
+
+ 
+    // Create boss enemy
     let boss = false;
-    if (chance(5) && player.kills > 50) { boss=true; }
+    if (chance(5) && player.kills > 50 && diff >= 3) {
+        boss=true; 
+    }
 
     
     if (boss) {
         enemy.hp.max = enemy.hp.max*10;
+        enemy.xp *= 10;
         //const createItem = (type='random', qLevel='random')
         enemy.lootItem = createItem('random', ranNum(4,5) );
+        enemy.name = enemy.title;
+        msg(`Elite: <span class='enemy'>${enemy.title}</span>`);
     }
+
+    // Unique roll: 
+    for (let i=0; i<node.uniques.length; i++) {
+        const name = Object.keys(node.uniques[i])[0];
+        let dropRate = node.uniques[i][name] * (1 + player.magicFind);
+        if (boss) {
+            dropRate *= 1.5;
+        }
+        //log(dropRate)
+        //dropRate = 1; //unique log debug
+        //dropRate = dropRate * 100;//unique log debug
+        if (chanceFrac(dropRate)) {
+            enemy.lootItem = getUniqueItem(name);
+        }
+    }
+
+
+    //enemy.lootItem = getUniqueItem('Celestial Blade'); //debug
 
     enemy.hp.current = enemy.hp.max;
 }
 
 const setEnemyStyle = () => {
     enemyNameElem.innerText = enemy.name;
+
+
+    enemyTypeImage.src = `img/${enemy.type}.png`;
+    enemyTypeElem.innerText = toTitleCase(enemy.type);
+
+
+
     enemyImageElem.style.backgroundImage = `url('${enemy.image}')`;
 
     let hp = (enemy.hp.current / enemy.hp.max) * 100;
@@ -507,6 +694,7 @@ const takeLoot = () => {
 
     if (player.inv.length >= player.invSlots) {
         // Inv is full, cant loot
+        msg(`Inventory is full`);
         flashInvIcon(); // Move inv tab icon
         return false;
     }
@@ -516,9 +704,10 @@ const takeLoot = () => {
 
     //add item to player inv
     player.inv.push(item);
+    //msg(`Looted ${item.name}`);
+    msg(`Looted <span style="color:${itemQuality[item.qualityLevel].color};">${item.name}</span>`);
 
 
-   
     setItemToSlot(item, invSlots[player.inv.length-1], player.inv.length-1);
 
 
@@ -548,6 +737,13 @@ const takeLoot = () => {
     
     let animDuration = 200; //ms
 
+    player.adventureLog.itemsLooted++;
+
+    if (item.qualityLevel === 6) {
+        player.uniqueLog[item.name] = true;
+        setUniqueLog();
+
+    }
 
 
     setTimeout(() => {
@@ -582,6 +778,30 @@ const setCombatView = () => {
     }
 }
 
+const getXpToLevel = lvl => {
+    let xp = lvl * 100;
+    return xp;
+}
+
+const setXpToLevel = () => {
+    characterNextLevelElem.innerText = (player.totalXp + player.xpToLevel).toLocaleString('EN');
+    characterLevelElem.innerText = player.level;
+}
+
+
+
+const setXpBar = () => {
+    let w = (player.xp/player.xpToLevel)*100;
+    //w = w.toFixed(1);
+    //log(player.xpToLevel)
+    xpBarElem.style.width = `${w}%`;
+    //log(`${w}%`)
+
+    // Xp bar level number
+    levelNumElem.innerText = player.level;  
+    characterXpElem.innerText = player.totalXp.toLocaleString('EN'); 
+}
+
 const attackEnemy = (pos) => {
     // Return early to avoid possibly triggering death multiple times.
     if (enemy.dead) return false;
@@ -589,49 +809,75 @@ const attackEnemy = (pos) => {
     let dmg = player.damage.base;
     dmg += player.damage.bonus;
     dmg += player.damage.typeBonus;
+    
+    // Multiply total damage with boost from STR points
+    let dmgMultiFromStr = ((player.attributes.str-player.attributes.base) * 0.01) + 1;
+
+    dmg *= dmgMultiFromStr;
+    dmg = Math.floor(dmg);
+    log(dmg)
 
     let attackAnim = animData.atk2;
 
 
-    if ( chance(player.crit.chance) ) {
+
+    if ( chanceFrac(player.crit.chance/100) ) {
         dmg *= player.crit.multiplier;
         dmg = Math.floor(dmg);
         attackAnim = animData.atk2red;
+        if (settings.critMessages) {
+            msg(`Critical hit`);
+        }
+      
     }
     enemy.hp.current -= dmg;
 
-
-
+   
 
     if (enemy.hp.current <= 0) {
         // Enemy is dead
         //log('Enemy is dead');
-        playAnim(animData.explosion1, false, pos);
+        //msg(`Defeated ${enemy.name}`);
+        msg(`Defeated <span class='enemy'>${enemy.name}</span> <span class='xp'>${enemy.xp}xp</span>`);
+
+        //msg(`Defeated <span class='enemy'>${enemy.name}</span>`);
+        
+        //msg(`<span class='xp'>${enemy.xp}xp</span>`);
+        if (!settings.lowSpec) {
+            playAnim(animData.explosion1, false, pos);
+        }
+  
         enemy.dead = true;
         player.kills++;
+        player.addXp(enemy.xp)
+        player.adventureLog.enemiesKilled++;
 
         // Hide enemy elem
       
         setCombatView();
+        setAdventureLogElems();
      
     } else {
-        // Set hp bar or something here, enemy is not dead yet
-        enemyImageContainer.classList.add('damaged');
-        //enemyHpBarContainer.classList.add('damaged');
+        //enemy is not dead yet
+        if (!settings.lowSpec) {
+            enemyImageContainer.classList.add('damaged');
+            enemyDamageOverlay.classList.remove('hidden');
+        }
 
-        enemyDamageOverlay.classList.remove('hidden');
 
-
-        //let attackAnim = animData.impact1;
-        //attackAnim = animData.atk2;
-        playAnim(attackAnim, true, pos);
-
+        if (!settings.lowSpec) {
+            playAnim(attackAnim, true, pos);
+        }
         
-        setTimeout(() => {
-            enemyImageContainer.classList.remove('damaged');
-            enemyDamageOverlay.classList.add('hidden');
-            //enemyHpBarContainer.classList.remove('damaged');
-        }, 100);
+
+        if (!settings.lowSpec) {
+            setTimeout(() => {
+                enemyImageContainer.classList.remove('damaged');
+                enemyDamageOverlay.classList.add('hidden');
+                //enemyHpBarContainer.classList.remove('damaged');
+            }, 100);
+        }
+ 
         
     }
 
@@ -643,7 +889,6 @@ const attackEnemy = (pos) => {
 
 
     save();
-
 }
 
 
@@ -696,7 +941,7 @@ const setListeners = () => {
     enemyContainer.addEventListener('click', e => {
         const x = e.clientX;
         const y = e.clientY;
-        log(`x: ${x}, y: ${y}`);
+        //log(`x: ${x}, y: ${y}`);
         const pos = {x:x, y:y}
         attackEnemy(pos);
     });
@@ -704,7 +949,6 @@ const setListeners = () => {
 
     invGrid.addEventListener('click', e => {
         if (e.target.getAttribute('data-empty') !== "true") {
-            log(e.target)
             showInItemViewer(e.target);
          
         } else {
@@ -720,12 +964,15 @@ const setListeners = () => {
             sellItem(slot.getAttribute('data-index'));
             setInvIcon();
             save();
+        } else {
+            msg('No item selected');
         }
     });
 
     
 
     sellAllButtonButton.addEventListener('click', e => {
+        //msg(`Sold inventory items`);
         sellAll();
     });
 
@@ -734,13 +981,17 @@ const setListeners = () => {
         if (slot !== undefined && slot !== null && slot.getAttribute('data-empty') !== "true") {
             //lock this elem
             lockItem(slot.getAttribute('data-index'));
-        }
+        } else {
+            msg('No item selected');
+        } 
     });
 
     equipButton.addEventListener('click', e => {
         const slot = document.querySelector('#inv-grid > .slot.selected');
         if (slot !== undefined && slot !== null && slot.getAttribute('data-empty') !== "true") {
             equipItem(slot.getAttribute('data-index'), slot);
+        } else {
+            msg('No item selected');
         }
     });
 
@@ -762,25 +1013,82 @@ const setListeners = () => {
         showMenu(true);
     });
 
-    /*
-    const mapButton = document.getElementById('map-button');
-    mapButton.addEventListener('click', e => {
-        showMap(true);
-    });
-    */
-    
-    const help = document.querySelector('#menu > .button.help')
-    const about = document.querySelector('#menu > .button.about')
+    const settingsButton = document.querySelector('#menu > .button.settings');
+    const helpButton = document.querySelector('#menu > .button.help');
+    const aboutButton = document.querySelector('#menu > .button.about');
 
-    help.addEventListener('click', e => {
+    settingsButton.addEventListener('click', e => {
+        showModal('settings');
+    });
+
+    helpButton.addEventListener('click', e => {
         showModal('help');
     });
 
-    about.addEventListener('click', e => {
+    aboutButton.addEventListener('click', e => {
         showModal('about');
     });
 
+
+    /* Game settings */
+    // Low-spec
+    document.getElementById('low-spec-setting').addEventListener('click', e => {
+        settings.lowSpec = e.target.checked; 
+        save();      
+    });
+    // Crit messages
+    document.getElementById('crit-messages-setting').addEventListener('click', e => {
+        log (typeof e.target.checked)
+        settings.critMessages = e.target.checked; 
+        save();       
+    });
+    //Auto-lock uniques
+    document.getElementById('lock-uniques-setting').addEventListener('click', e => {
+        settings.autoLockUniques = e.target.checked; 
+        save();       
+    });
+
+    /* Character view */
+    // Attribute "+" buttons
+    const plusStr = document.querySelector('#attributes > .item.str > .plus-cont > .plus');
+    const plusDex = document.querySelector('#attributes > .item.dex > .plus-cont > .plus');
+    const plusInt = document.querySelector('#attributes > .item.int > .plus-cont > .plus');
+
+    plusStr.addEventListener('click', e => {
+        player.addAttribute('str');
+    });
+
+    plusDex.addEventListener('click', e => {
+        player.addAttribute('dex');
+    });
+
+    plusInt.addEventListener('click', e => {
+        player.addAttribute('int');
+    });
+
+    // Attribute "Repsec" button
+    const respecAttributesButton = document.querySelector('#available-points-cont > .respec-cont > .respec');
+    respecAttributesButton.addEventListener('click', e => {
+        respecAttributes();
+    });
+
+    const closeItemModalButton = document.querySelector('#item-modal > .content > .button-container > .button.close');
+    closeItemModalButton.addEventListener('click', e => {
+        closeItemModal();
+    });
+
+    const imageViewerImage = document.querySelector('#item-viewer > .image-container');
+    imageViewerImage.addEventListener('click', e => {
+        //if item is selected in inv, open it in item modal
+        const selectedItem = document.querySelector('#inv-grid > .slot.selected');
+        if (selectedItem !== null) {
+            openItemModal();
+        }
+    });
+
+
 }
+
 
 const clearInvSelection = () => {
 
@@ -814,7 +1122,7 @@ const showInItemViewer = (elem) => {
 
     const item = player.inv[itemI];
 
-    if(item === undefined) {
+    if (item === undefined) {
         // no items left in inv
         // likely because we equipped the only item in inv
         clearItemViewer();
@@ -844,6 +1152,8 @@ const showInItemViewer = (elem) => {
         itemViewerEffectsContainer.append(effectElem);
     }
 
+    itemViewerFlavorContainer.innerText = item.flavor;
+
 
     setViewerImage(item);
 
@@ -857,6 +1167,7 @@ const clearItemViewer = () => {
     itemViewerQualityTitle.innerText = '';
     itemViewerTypeTitle.innerText = '';
     itemViewerEffectsContainer.innerHTML = '';
+    itemViewerFlavorContainer.innerHTML = '';
     itemViewerSellValueContainer.classList.add('hidden');
     itemViewerImage.classList.add('hidden');
     itemViewerBottomShadow.classList.add('hidden');
@@ -1015,7 +1326,18 @@ const createTestItems = (amount) => {
     }
 }
 
+// debug/cheat to give all unique items
+const giveAllUniques = () => {
+    const names = Object.getOwnPropertyNames(uniques);
 
+    for (const name of names) {
+        const item = getUniqueItem(name);
+        if (player.inv.length < player.invSlots) {
+            player.inv.push(item);
+        }
+    }
+    setInvItems();
+}
 
 
 const createInvSlots = () => {
@@ -1245,16 +1567,25 @@ const sellItem = i => {
     if (item.locked) {
         return false
     }
+    //msg(`Sold ${item.name}`);
 
-    const sellValue = item.sellValue * (1+player.goldFind) ;
+    const sellValue = Math.floor(item.sellValue * (1+player.goldFind));
 
-    addGold( Math.floor(sellValue) );
+
+    addGold(sellValue);
+
     player.inv.splice(i, 1);
     clearInvSlot(i);
     clearInvSelection();
     clearItemViewer();
     setInvItems();
-    sellItemAnimation(i);
+
+    if (!settings.lowSpec) {
+        sellItemAnimation(i);
+    }
+    player.adventureLog.goldGained += sellValue;
+    player.adventureLog.itemsSold++;
+    setAdventureLogElems();
 }
 
 const sellAll = () => {
@@ -1269,7 +1600,10 @@ const sellAll = () => {
             // Item is not locked, sell it
             totalValue += item.sellValue;
             player.inv.splice(i, 1);
-            sellItemAnimation(i);
+            if (!settings.lowSpec) {
+                sellItemAnimation(i);
+            }
+            player.adventureLog.itemsSold++;
         } else {
             lockedItems.push(item);
         }
@@ -1285,8 +1619,13 @@ const sellAll = () => {
     clearInvSelection();
     clearItemViewer();
     setInvItems();
-    addGold( Math.floor( totalValue * (1+player.goldFind) ) );
+
+    totalValue =  Math.floor( totalValue * (1+player.goldFind) );
+    addGold(totalValue);
     setInvIcon();
+
+    player.adventureLog.goldGained += totalValue;
+    setAdventureLogElems();
 }
 
 
@@ -1355,6 +1694,7 @@ const equipItem = (itemIndex, slotElem) => {
     }
 
     player.equipment[targetSlot] = item;
+    //msg(`Equipped ${item.name}`);
     setInvItems();
     showInItemViewer(slotElem);
     setEquippedItemsStyle();
@@ -1460,10 +1800,59 @@ const clearEquipmentSlot = (slot, slotName) => {
 }
 
 
+const respecAttributes = () => {
+    const cost = 1000;
 
+    let ptsUsed = 0;
+    ptsUsed += player.attributes.str - player.attributes.base; 
+    ptsUsed += player.attributes.dex - player.attributes.base; 
+    ptsUsed += player.attributes.int - player.attributes.base; 
+
+    if (ptsUsed === 0) {
+        msg('No points used');
+        return false;
+    } else if (player.gold < cost) {
+        msg('Not enough gold, need 1000');
+        return false;
+    } else {
+        msg(`Attribute respec (-${cost} gold)`);
+        addGold( Math.floor(-cost) );
+        let ptsUnused = player.attributes.unusedPoints;
+        player.attributes.str = player.attributes.base;
+        player.attributes.dex = player.attributes.base;
+        player.attributes.int = player.attributes.base;
+
+        player.attributes.unusedPoints = ptsUnused + ptsUsed;
+        setPlayerStats();
+    }
+
+}
+
+
+const setAdventureLogElems = () => {
+    enemiesKilledElem.innerText = player.adventureLog.enemiesKilled;
+    itemsLootedElem.innerText = player.adventureLog.itemsLooted;
+    itemsSoldElem.innerText = player.adventureLog.itemsSold;
+    goldGainedElem.innerText = player.adventureLog.goldGained;
+}
 
 // Set player stats after equipping/unequipping items
 const setPlayerStats = () => {
+
+    // Set player attributes
+    const unusedPoints = document.querySelector('#available-points-cont >  .points');
+    unusedPoints.innerText = player.attributes.unusedPoints;
+
+    const strElem = document.querySelector('#attributes > .item.str > .current');
+    const dexElem = document.querySelector('#attributes > .item.dex > .current');
+    const intElem = document.querySelector('#attributes > .item.int > .current');
+    strElem.innerText = player.attributes.str;
+    dexElem.innerText = player.attributes.dex;
+    intElem.innerText = player.attributes.int;
+
+
+
+
     let bonusDamage = 0;
     let typeBonusDamage = 0;
     let critChanceBonus = 0;
@@ -1519,23 +1908,40 @@ const setPlayerStats = () => {
     
     }
 
+
+    const dmgMultiFromStr = ((player.attributes.str-player.attributes.base) * 0.01) + 1;
+
+    const critChanceFromDex = ((player.attributes.dex-player.attributes.base) * 0.25) + 0;
+  
+    const critDamageFromDex = ((player.attributes.dex-player.attributes.base) * 1.00) + 0;
+
+    const magicFindFromInt = ((player.attributes.int-player.attributes.base) * 0.50) + 0;
+
+    const goldFindFromInt = ((player.attributes.int-player.attributes.base) * 1.00) + 0;
+
     player.damage.bonus = bonusDamage;
     player.damage.typeBonus = typeBonusDamage;
 
-    player.crit.chance = critChanceBonus;
-    player.crit.multiplier = critMultiplierBonus + player.crit.baseMultiplier;
+    player.crit.chance = critChanceBonus + critChanceFromDex;
+   
+    player.crit.multiplier = critMultiplierBonus + player.crit.baseMultiplier + critDamageFromDex/100;
 
-    player.magicFind = magicFind;
-    player.goldFind = goldFind;
+    player.magicFind = magicFind + magicFindFromInt/100;
+    player.goldFind = goldFind + goldFindFromInt/100;
 
 
-    const damageElem = document.querySelector('#player-stats-container .damage');
-    const critChanceElem = document.querySelector('#player-stats-container .crit-chance');
-    const critDamageElem = document.querySelector('#player-stats-container .crit-damage');
-    const magicFindElem = document.querySelector('#player-stats-container .magic-find');
-    const goldFindElem = document.querySelector('#player-stats-container .gold-find');
+    const damageElem = document.querySelector('#player-stats .damage');
+    const critChanceElem = document.querySelector('#player-stats .crit-chance');
+    const critDamageElem = document.querySelector('#player-stats .crit-damage');
+    const magicFindElem = document.querySelector('#player-stats .magic-find');
+    const goldFindElem = document.querySelector('#player-stats .gold-find');
 
-    const totalDamage = player.damage.base+player.damage.bonus+player.damage.typeBonus;
+    // Total damage: base + item damage bonus + weapon type bonus
+    let totalDamage = player.damage.base+player.damage.bonus+player.damage.typeBonus;
+    // Multiply total damage with boost from STR points
+    // This is also calculated when attacking enemy
+    totalDamage *= dmgMultiFromStr;
+    totalDamage = Math.floor(totalDamage);
     damageElem.innerText = totalDamage;
 
     critChanceElem.innerText = `${Math.floor(player.crit.chance)}%`;
@@ -1544,7 +1950,36 @@ const setPlayerStats = () => {
     magicFindElem.innerText = `+${Math.floor(player.magicFind*100)}%` ;
     goldFindElem.innerText = `+${Math.floor(player.goldFind*100)}%` ;
 
+    
+    // Set damage boost percent from STR in attributes
+    const charViewBonusDmg = document.querySelector('#attributes > .item.str > .details > .row > .dmg-bonus');
+    charViewBonusDmg.innerText = `+${(player.attributes.str-player.attributes.base)}%` ;
+    
+
+    // Set total damage in attributes (STR section)
+    const charViewTotalDamage = document.querySelector('#attributes > .item.str > .details > .row > .dmg');
+    charViewTotalDamage.innerText = totalDamage ;
+
+    // Set crit chance boost from DEX in attributes
+    const charViewCritChance = document.querySelector('#attributes > .item.dex > .details > .row > .crit-chance-bonus');
+    charViewCritChance.innerText = `+${critChanceFromDex.toFixed(2)}%` ;
+
+    // Set crit damage boost from DEX in attributes
+    const charViewCritDamage = document.querySelector('#attributes > .item.dex > .details > .row > .crit-dmg-bonus');
+    charViewCritDamage.innerText = `+${critDamageFromDex}%` ;
+
+    // Set magic find boost from INT in attributes
+    const charViewMagicFind = document.querySelector('#attributes > .item.int > .details > .row > .magic-find-bonus');
+    charViewMagicFind.innerText = `+${magicFindFromInt.toFixed(0)}%`;
+
+    // Set gold find boost from INT in attributes
+    const charViewGoldFind = document.querySelector('#attributes > .item.int > .details > .row > .gold-find-bonus');
+    charViewGoldFind.innerText = `+${goldFindFromInt.toFixed()}%`;
+
+    setAdventureLogElems();
 }
+
+
 
 const setAnimImages = () => {
     const animNames = Object.getOwnPropertyNames(animData);
@@ -1560,21 +1995,134 @@ const setMap = () => {
     const w = settings.map.w;
     const h = settings.map.h;
 
-    const mapElem = document.getElementById('map');
-    mapElem.width = w;
-    mapElem.height = h;
+    const mapBg = document.getElementById('map-background');
+    //mapBg.setAttribute('src', mapData.bg);
+    mapBg.setAttribute( 'src', `${ createMapBg() } `);
 
+    
+
+    const mapElem = document.getElementById('map');
+    mapElem.style.width = `${w}px`;
+    mapElem.style.height = `${h}px`;
+
+    //log(mapElem)
     //map.style.background-image
 }
 
+const createUniqueLog = () => {
+    const target = document.querySelector('#unique-log > .list');
+    //log(target)
+
+    let items = Object.getOwnPropertyNames(uniques);
+    items.sort();
+
+    //log(items)
+
+    const foundUniquesElem = document.querySelector('#unique-log > .info > .found-amount');
+    foundUniquesElem.innerText = player.adventureLog.uniquesFound;
+
+    const totalUniquesElem = document.querySelector('#unique-log > .info > .total-amount');
+    totalUniquesElem.innerText = items.length;
+
+ 
+    
+
+    for (let i=0; i<items.length; i++) {
+        const item = items[i];
+        //log(item)
+
+        if (player.uniqueLog && player.uniqueLog[item]) {
+            player.uniqueLog[item] = true;
+
+        } else {
+            player.uniqueLog[item] = false;
+        }
+      
+
+        //check if player has uniques in inv or equips
+
+        const elem = document.createElement('div');
+        elem.classList.add('item');
+        elem.setAttribute('data-name', item);
+
+        elem.innerText = '???';
+
+        target.append(elem);
+
+    }
+
+    //log(player.uniqueLog)
+    setUniqueLog();
+
+    const uniqueLogItems = document.querySelectorAll('#unique-log > .list > .item');
+    for (const item of uniqueLogItems) {
+        item.addEventListener('click', e => {
+            if (e.target.classList.contains('found')) {
+                openItemModal();
+            }
+      
+        });
+    }
+
+}
+
+//set found items visible in the DOM
+const setUniqueLog = () => {
+    const elems = document.querySelectorAll('#unique-log > .list > .item')
+   //log(elems);
+
+   let uniquesFound = 0;
+
+    for (let i=0; i<elems.length; i++) {
+        const elem = elems[i];
+        const itemName = elem.getAttribute('data-name');
+        //log(itemName)
+        if (player.uniqueLog[itemName] === true) {
+            elem.innerText = itemName;
+            elem.classList.add('found');
+            uniquesFound++;
+        }
+    }
+
+    const foundUniquesElem = document.querySelector('#unique-log > .info > .found-amount');
+    foundUniquesElem.innerText = uniquesFound;
+}
+
+
+const openItemModal = () => {
+    const elem = document.getElementById('item-modal');
+    elem.classList.remove('hidden');
+
+}
+
+const closeItemModal = () => {
+    const elem = document.getElementById('item-modal');
+    elem.classList.add('hidden');
+}
+
+// Set item modal content
+const setItemModal = () => {
+    
+}
+
+
 const initNewGame = () => {
     showMenu(false);
+
+    mapData.currentNode = 0;
+    mapData.selectedNode = -1;
+    setMapNodeStyles()
+    //moveToNode(0);
+
     createEnemy();
     setEnemyStyle();
     setLootItemStyle();
-    //setMap();
-
+  
     player = new Player();
+    player.xpToLevel = getXpToLevel(player.level);
+    levelNumElem.innerText = player.level;
+    setXpBar();
+    setXpToLevel();
 
     //createTestItems(20); 
 
@@ -1582,25 +2130,19 @@ const initNewGame = () => {
     setPlayerStats();
     setEquippedItemsStyle();
 
+
+
     showTabView(0);
     save();
 }
 
 preloadImages(imagesToPreload).then(function(imgs) {
-
-
     setAnimImages();
     createInvSlots();
     createEquipmentSlots();
-
   
-
-  
-
-
     if ( saveExists() ) {
         // load save
-
         loadSave();
         setLootItemStyle();
         setCombatView();
@@ -1613,24 +2155,33 @@ preloadImages(imagesToPreload).then(function(imgs) {
     }
 
     setEnemyStyle()
-  
-  
-
     setInvItems();
     setEquippedItemsStyle();
     setPlayerStats();
     setInvIcon()
     setListeners();
 
+    setMap();
+    setMapNodeStyles()
+
     //const enemyW = enemyImageElem.clientWidth;
     //enemyHpBarContainer.style.width = `${enemyW+50}px`
 
     showTabView(player.tab);
 
-    save();
+    player.xpToLevel = getXpToLevel(player.level);
+    levelNumElem.innerText = player.level;
+    setXpBar();
+    setXpToLevel();
+    setSettingsCheckboxes()
+    createUniqueLog();
+
+    //save();
+
+    //setUniqueListInMenu();
 
     //showMenu(); //debug
-    //showModal('about'); //debug
+    //showModal('settings'); //debug
    
 
 }, function(errImg) {

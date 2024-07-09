@@ -20,7 +20,9 @@ const imagesToPreload = [
     'img/swords_crossed.png',
     'img/transp.png',
     'img/gran.jpg',
-    'img/map_pergament_small.png',
+    'img/stone.png',
+    //'img/map/map_pergament_big.png',
+    'img/map/map_pergament_small_3.png',
 ]
 
 const preloadImages = srcs => {

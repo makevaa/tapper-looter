@@ -1,5 +1,7 @@
 const settings = {
-    enemyImageAmount: 133,
+    lowSpec:false,
+    critMessages:true,
+    autoLockUniques:true,
 
     enemy: {
         hp: {
@@ -9,15 +11,15 @@ const settings = {
 
     map: {
         w: 1000,
-        h: 1000
+        h: 700,
     },
 
 }
 
 //   const types = ['amulet', 'artifact', 'axe', 'bow', 'hammer', 'mace', 'potion', 'spear', 'staff', 'sword']
 const itemImageAmounts = {
-    amulet:6,
-    artifact: 24,
+    amulet:11,
+    artifact: 25,
     axe:8,
     bow:10,
     hammer:3,
@@ -27,3 +29,4 @@ const itemImageAmounts = {
     staff:8,
     sword:14,
 }
+

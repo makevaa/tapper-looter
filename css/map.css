@@ -1,31 +1,281 @@
 #view-container > .view.map {  
     xborder:1px solid red;
-    xposition:relative;
     display:flex;
     flex-direction: column;
-    xjustify-content: space-evenly;
     justify-content: start;
     height:100%;
-    xwidth:100%;
 }
+
+#map-bar {
+    xborder:1px solid grey;
+    height:20%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display:flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+#map-bar > .button {
+    xborder:1px solid grey;
+    border-radius:5px;
+    height:90%;
+    min-width:50px;
+    max-width:400px;
+    flex:25%;
+    background-color: rgba(0, 0, 0, 0.5);
+    color:grey;
+    padding:10px;
+    text-align: center;
+
+    display:flex;
+    justify-content: center;
+    align-items: center;
+
+    background-image: url('../img/button.png');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    font-size:1em;
+    font-family: Georgia, serif;
+	text-transform: uppercase;
+    color:#ffffff;
+    text-shadow: 0px 0px 10px orange, 0px 0px 5px rgb(160, 160, 160);
+}
+
+#map-bar > .button:active {
+    background-image: url('../img/button_dark.png');
+    font-size:0.9em;
+} 
 
 
 #map-container {
     xborder:10px solid red;
-    xbackground-color:green;
     width:100%;
     height:100%;
     overflow:scroll;
+    border-style: solid;
+	border-image-source: url('../img/border.png');
+	border-image-slice: 150;
+	border-image-width: 3em 0em;
+	border-image-outset: 1;
+	border-image-repeat: round;
+}
+
+#map-container > #map {
+    xborder:1px solid red;
+    width:100%;
+    height:80%;
+    position:relative;
+    z-index:0;
+
+
+}
+
+#map-container > #map > #map-background {
+    xborder:1px solid magenta;
+    width:100%;
+    height:100%;
+    position:absolute;
+    xbackground:green;
+
+    background-image: url('../img/gran.jpg');
+    background-position: center;
+    background-repeat: no-repeat;
+    xbackground-size: cover;
+    background-size: 100% 100%;
 }
 
 
-#map-container > #map {
-    xbackground-color:orange;
-    width:100%;
+#map > .map-node {
+    xborder:1px solid grey;
+    position:absolute;
+    width:100px;
+    height:100px;
+    padding:20px;
+    z-index:1;
+    display:flex;
+    flex-direction:column;
+    align-items: center;
+    justify-content:center;
+}
+
+
+#map > .map-node:active {
+    background-color:rgba(67, 0, 0, 0.584);
+} 
+
+#map > .map-node > .image-container {
+    width:50px;
+    height:50px;
+
+    display:flex;
+    flex-direction:column;
+    align-items: center;
+    justify-content:center;
+
+    xborder-style: solid;
+	xborder-image-source: url('../img/border_simple.png');
+	xborder-image-slice: 150;
+	xborder-image-width: 3em;
+	xborder-image-outset: 0;
+	xborder-image-repeat: stretch;
+    pointer-events: none;
+
+}
+
+#map > .map-node > .image-container > .image {
+    width: 100%;
     height:100%;
+    filter: drop-shadow(0px 0px 3px rgba(0, 0, 0, 0.99)); 
+  
+}
+
+#map > .map-node > .name {
+    color: #262626;
+    xborder-width:5px;
+    text-shadow:
+    0px 0px 5px #dfaf7f,
+    0px 0px 5px #dfaf7f,
+    0px 0px 5px #dfaf7f,
+    0px 0px 5px #dfaf7f,
+    0px 0px 5px #dfaf7f,
+    0px 0px 5px #dfaf7f,
+    0px 0px 5px #dfaf7f,
+    0px 0px 5px #dfaf7f,
+    0px 0px 5px #dfaf7f,        
+    0px 0px 5px #dfaf7f
+    ;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+	text-transform: uppercase;
+    font-size:1.5em;
+    font-weight: 800;
+    text-align:center;
+    white-space: nowrap;
+    pointer-events: none;
+    xpadding:5px;
+}
+
+.map-node.selected  {
+    xbackground-color:rgba(0,0,0,0.5);
+    border: 6px solid rgb(140, 7, 7);
+    xoutline: 2px solid black;
+    border-radius:50px;
+    box-shadow: 
+    inset 0px 0px 5px #dfaf7f,
+    inset 0px 0px 5px #dfaf7f,
+    inset 0px 0px 5px #dfaf7f,
+    inset 0px 0px 5px #dfaf7f,
+    inset 0px 0px 5px #dfaf7f,
+    inset 0px 0px 5px #dfaf7f,
+    inset 0px 0px 5px #dfaf7f,    
+    0px 0px 5px #dfaf7f,
+    0px 0px 5px #dfaf7f,
+    0px 0px 5px #dfaf7f,
+    0px 0px 5px #dfaf7f,
+    0px 0px 5px #dfaf7f,
+    0px 0px 5px #dfaf7f,
+    0px 0px 5px #dfaf7f,
+    0px 0px 5px #dfaf7f,
+    0px 0px 5px #dfaf7f,
+    0px 0px 5px #dfaf7f,
+    0px 0px 5px #dfaf7f,
+    0px 0px 5px #dfaf7f,
+    0px 0px 5px #dfaf7f
+    ;
+}
+
+.map-node.selected > .name   {
+    xbackground-color:rgba(0,0,0,0.99);
+    xborder: 5px solid rgb(78, 78, 78);
+    xborder-radius:10px;
+    xcolor:red!important;
+}
+
+
+#map > .map-node > .current-label {
+    xborder: 1px solid red;
+    visibility:hidden;
+    xbackground-color:rgba(0, 0, 0, 0.9);
+    color: #e70000;
+ 
+
+    xtext-shadow: 
+    0px 0px 5px rgba(0, 0, 0, 1),
+    0px 0px 5px rgba(0, 0, 0, 1),
+    0px 0px 5px rgba(0, 0, 0, 1),
+    0px 0px 5px rgba(0, 0, 0, 1),
+    0px 0px 5px rgba(0, 0, 0, 1)
+    ;
+    
+    background: rgb(2,0,36);
+    background: linear-gradient(90deg, rgba(2,0,36,0) 0%, rgba(0,0,0,.8) 20%, rgba(0,0,0,0.8) 80%, rgba(0,0,0,0) 100%);
+    /*
+    text-shadow:0px 0px 5px #dfaf7f,
+                0px 0px 5px #dfaf7f,
+                0px 0px 5px #dfaf7f,
+                0px 0px 5px #dfaf7f,
+                0px 0px 1px rgba(0, 0, 0, 1),
+                0px 0px 1px rgba(0, 0, 0, 1),
+                0px 0px 1px rgba(0, 0, 0, 1),
+                0px 0px 1px rgba(0, 0, 0, 1);
+    */
+
+
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    xfont-family:consolas,monospace;
+    text-transform: uppercase;
+    font-size:1.1em;
+    xfont-weight: 800;
+    text-align:center;
+    white-space: nowrap;
+    pointer-events: none;
+    padding:5px 50px;
+
+
+    /*
+    text-shadow:0px 0px 10px rgba(0, 0, 0, 0.5), 
+                0px 0px 3px rgba(0, 0, 0, 0.5),
+                1px 1px 0px rgba(55, 5, 5, 0.99),
+                0px 0px 8px orange,
+                0px 0px 3px rgb(255, 255, 255);
+    */
+
+    xcolor:#f5e9d8;
+
+    /*
+    border-style: solid;
+	border-image-source: url('../img/border_simple.png');
+	border-image-slice: 50;
+	border-image-width: 5em;
+	border-image-outset: 0;
+	border-image-repeat: stretch;
+    */
+
 
     
+    xbackground-image: url('../img/gran.jpg');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
 
+    xbox-shadow: 5px 5px 5px 0px rgba(0, 0, 0, 0.5),
+                0px 0px 5px 5px rgba(0, 0, 0, 0.5),
+                inset 0px 0px 5px 5px rgba(0, 0, 0, 0.5)
+    ;
 
+    text-shadow: 
+        0 0 1vw #FA1C16, 
+        0 0 3vw #FA1C16, 
+        0 0 5vw #FA1C16, 
+        0 0 5vw #FA1C16, 
+        0 0 .4vw #FED128, 
+        0px 0px 0px #806914
+    ;
+    color: #ffda53;
+    xcolor: #ffffff;
+    
+}
 
+#map > .map-node.current > .current-label {
+    visibility:visible;
 }

@@ -1,0 +1,108 @@
+#xp-bar-container {
+    xborder:1px solid red;
+    width: 100%;
+    height:6%;
+    position:absolute;
+    bottom:0;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    pointer-events: none;
+}
+
+#xp-bar {
+    xborder: 2px solid rgb(255, 255, 255);
+	xborder-radius:3px;
+    position:relative;
+    display:block;
+    margin:auto;
+    width:90%;
+    height:50%;
+
+	border-style:solid;
+    border-image-source: url('../img/border_grey.png');
+	border-image-slice: 4;
+	border-image-width: 5px;
+	border-image-outset: 0;
+	border-image-repeat: round;
+
+
+    box-shadow: 
+		2px 2px 0px 0px rgb(19, 19, 19),
+		3px 3px 3px 0px rgba(0,0,0, 0.8),
+		0px 0px 5px 5px rgba(0,0,0, 0.5),
+		inset 5px 5px 5px 0px rgba(0,0,0, .8)
+	;
+}
+
+#xp-bar:after{
+	content: '';
+	position: absolute;
+	top: 2px;
+	left: 2px;
+	width: calc(100% - 4px);
+	height: 50%;
+	background: linear-gradient(rgba(255,255,255,0.4), rgba(255,255,255,0.1));
+    xbox-shadow: 5px 5px 5px 0px rgba(0, 0, 0, 0.99);
+}
+
+
+
+#xp-bar > .bg {
+	position:absolute;
+	width:100%;
+	height:100%;
+	background-color:rgba(0, 0, 0, 0.8);
+}
+
+#xp-bar > .bar {
+	position:absolute;
+	width:30%;
+	max-width:100%;
+	height:100%;
+	background-color: #1e1e6c;
+	xborder-right: 1px solid rgb(62, 68, 255);
+    xtransition: width 0.1s;
+    xwill-change: width;
+
+	box-shadow: inset 2px 2px 2px 0px rgba(0,0,0, 0.7);
+}
+
+#xp-bar > .level-container {
+	xborder:1px solid red;
+	position:absolute;
+	left:0;
+	margin-left:20px;
+	color:rgb(200, 200, 200);
+	text-shadow: 2px 2px 0px rgba(0, 0, 0, 1);
+	font-size:0.8em;
+	z-index:1;
+
+    height:100%;
+
+    display:flex;
+	justify-content: center;
+	align-items: center;
+}
+
+#xp-bar > .level-container > .level {
+    margin-left:5px;
+}
+
+#xp-bar > .fade {
+	position:absolute;
+	width:100%;
+	height:100%;
+	xbox-shadow: inset 2px 2px 2px rgba(0,0,0, 0.5);
+
+	ximage-rendering: pixelated;
+	xborder-width:20px;
+	xborder-style: solid;
+
+	xborder-image-source: url('../img/bar.png');
+	xborder-image-slice: 15;
+	xborder-image-width: 15;
+	xborder-image-outset: 0;
+	xborder-image-repeat: round;
+}
+
